@@ -1,3 +1,45 @@
+2019-01-24  Alan Hayward  <alan.hayward@arm.com>
+
+	* gdb.base/infcall-nested-structs.c (struct struct_static_02_01):
+	New structure.
+	(struct struct_static_02_02): Likewise.
+	(struct struct_static_02_03): Likewise.
+	(struct struct_static_02_04): Likewise.
+	(struct struct_static_04_01): Likewise.
+	(struct struct_static_04_02): Likewise.
+	(struct struct_static_04_03): Likewise.
+	(struct struct_static_04_04): Likewise.
+	(struct struct_static_06_01): Likewise.
+	(struct struct_static_06_02): Likewise.
+	(struct struct_static_06_03): Likewise.
+	(struct struct_static_06_04): Likewise.
+	(cmp_struct_static_02_01): Likewise.
+	(cmp_struct_static_02_02): Likewise.
+	(cmp_struct_static_02_03): Likewise.
+	(cmp_struct_static_02_04): Likewise.
+	(cmp_struct_static_04_01): Likewise.
+	(cmp_struct_static_04_02): Likewise.
+	(cmp_struct_static_04_03): Likewise.
+	(cmp_struct_static_04_04): Likewise.
+	(cmp_struct_static_06_01): Likewise.
+	(cmp_struct_static_06_02): Likewise.
+	(cmp_struct_static_06_03): Likewise.
+	(cmp_struct_static_06_04): Likewise.
+	(call_all): Test new structs.
+	* gdb.base/infcall-nested-structs.exp: Likewise.
+
+2019-01-21  Alan Hayward  <alan.hayward@arm.com>
+	* gdb.base/infcall-nested-structs.exp: Test C++ in addition to C.
+
+2019-01-21  Alan Hayward  <alan.hayward@arm.com>
+	* gdb.base/stack-protector.c: New test.
+	* gdb.base/stack-protector.exp: New file.
+	* gdb.cp/ovldbreak.exp: Only allow a single break line.
+	* lib/gdb.exp (get_compiler_info): Use getting_compiler_info
+	option.
+	(gdb_compile): Remove stack protector for GCC and prevent
+	recursion.
+
 2019-01-16  Keith Seitz  <keiths@redhat.com>
 
 	PR gdb/23773

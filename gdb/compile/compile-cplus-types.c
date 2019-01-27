@@ -23,18 +23,16 @@
 #include "gdbtypes.h"
 #include "compile-internal.h"
 #include "compile-cplus.h"
-#include "gdb_assert.h"
+#include "common/gdb_assert.h"
 #include "symtab.h"
 #include "source.h"
 #include "cp-support.h"
 #include "cp-abi.h"
-#include "symtab.h"
 #include "objfiles.h"
 #include "block.h"
 #include "gdbcmd.h"
 #include "c-lang.h"
-#include "compile-c.h" 		/* Included for c_get_range_decl_name
-				   et al.  */
+#include "compile-c.h"
 #include <algorithm>
 
 /* Default compile flags for C++.  */

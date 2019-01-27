@@ -47,10 +47,9 @@
 #include "cli/cli-utils.h"
 #include "cli/cli-script.h"
 #include "cli/cli-style.h"
-#include "format.h"
+#include "common/format.h"
 #include "source.h"
 #include "common/byte-vector.h"
-#include "cli/cli-style.h"
 
 /* Last specified output format.  */
 

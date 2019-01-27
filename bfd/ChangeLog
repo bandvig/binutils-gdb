@@ -1,3 +1,26 @@
+2019-01-25  Nick Clifton  <nickc@redhat.com>
+
+	* po/ru.po: Updated Russian translation.
+
+2019-01-23  Nick Clifton  <nickc@redhat.com>
+
+	* po/fr.po: Updated French translation.
+
+2019-01-21  Nick Clifton  <nickc@redhat.com>
+
+	* po/pt.po: Updated Portuguese translation.
+	* po/uk.po: Updated Ukranian translation.
+
+2019-01-21  Yuri Chornoivan  <yurchor@ukr.net>
+
+	PR 24108
+	* elf32-nds32.c (nds32_relocate_section): Add space between words
+	in error message.
+	* elfnn-riscv.c (riscv_version_mismatch): Fix spelling mistake in
+	error message.
+	(riscv_i_or_e_p): Likewise.
+	(riscv_merge_arch_attr_info): Likewise.
+
 2019-01-19  Nick Clifton  <nickc@redhat.com>
 
 	* version.m4: Reset to 2.32.51

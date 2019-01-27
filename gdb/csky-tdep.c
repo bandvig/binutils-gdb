@@ -20,7 +20,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include "defs.h"
-#include "gdb_assert.h"
+#include "common/gdb_assert.h"
 #include "frame.h"
 #include "inferior.h"
 #include "symtab.h"
@@ -52,10 +52,8 @@
 #include "dwarf2-frame.h"
 #include "user-regs.h"
 #include "valprint.h"
-#include "reggroups.h"
 #include "csky-tdep.h"
 #include "regset.h"
-#include "block.h"
 #include "opcode/csky.h"
 #include <algorithm>
 #include <vector>

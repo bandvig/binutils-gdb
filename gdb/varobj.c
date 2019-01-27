@@ -26,7 +26,7 @@
 #include "gdb_regex.h"
 
 #include "varobj.h"
-#include "vec.h"
+#include "common/vec.h"
 #include "gdbthread.h"
 #include "inferior.h"
 #include "varobj-iter.h"
@@ -35,7 +35,6 @@
 #if HAVE_PYTHON
 #include "python/python.h"
 #include "python/python-internal.h"
-#include "python/py-ref.h"
 #else
 typedef int PyObject;
 #endif

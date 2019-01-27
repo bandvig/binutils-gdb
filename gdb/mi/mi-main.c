@@ -43,7 +43,6 @@
 #include "mi-common.h"
 #include "language.h"
 #include "valprint.h"
-#include "inferior.h"
 #include "osdata.h"
 #include "common/gdb_splay_tree.h"
 #include "tracepoint.h"
@@ -57,7 +56,7 @@
 #include "common/byte-vector.h"
 
 #include <ctype.h>
-#include "run-time-clock.h"
+#include "common/run-time-clock.h"
 #include <chrono>
 #include "progspace-and-thread.h"
 #include "common/rsp-low.h"

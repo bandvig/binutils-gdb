@@ -1,3 +1,23 @@
+2019-01-25  Nick Clifton  <nickc@redhat.com>
+
+	* po/bg.po: Updated Bulgarian translation.
+
+2019-01-23  Sebastian Huber  <sebastian.huber@embedded-brains.de>
+
+	* ld.texi (--wrap): Add warning that LTO may make this feature
+	ineffective.
+
+2019-01-21  Nick Clifton  <nickc@redhat.com>
+
+	* po/uk.po: Updated Ukranian translation.
+	* po/pr_BR.po: Updated Brazilian Portuguese translation.
+
+2019-01-21  Nick Clifton  <nickc@redhat.com>
+
+	PR 24108
+	* testsuite/ld-riscv-elf/attr-merge-arch-failed-01.d: Update
+	expected error message.
+
 2019-01-19  Nick Clifton  <nickc@redhat.com>
 
 	* configure: Regenerate.

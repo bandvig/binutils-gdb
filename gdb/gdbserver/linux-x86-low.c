@@ -24,7 +24,7 @@
 #include "linux-low.h"
 #include "i387-fp.h"
 #include "x86-low.h"
-#include "x86-xstate.h"
+#include "common/x86-xstate.h"
 #include "nat/gdb_ptrace.h"
 
 #ifdef __x86_64__
@@ -38,7 +38,7 @@
 #include "elf/common.h"
 #endif
 
-#include "agent.h"
+#include "common/agent.h"
 #include "tdesc.h"
 #include "tracepoint.h"
 #include "ax.h"
@@ -72,7 +72,6 @@ static const char *xmltarget_amd64_linux_no_xml = "@<target>\
 
 #include <sys/reg.h>
 #include <sys/procfs.h>
-#include "nat/gdb_ptrace.h"
 #include <sys/uio.h>
 
 #ifndef PTRACE_GET_THREAD_AREA
