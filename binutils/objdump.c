@@ -2882,7 +2882,7 @@ dump_dwarf_section (bfd *abfd, asection *section,
 static void
 dump_dwarf (bfd *abfd)
 {
-  bfd * separates;
+  bfd_boolean have_separates;
 
   is_relocatable = (abfd->flags & (EXEC_P | DYNAMIC)) == 0;
 
@@ -2946,12 +2946,19 @@ dump_dwarf (bfd *abfd)
       break;
     }
 
-  separates = load_separate_debug_file (abfd, bfd_get_filename (abfd));
+  have_separates = load_separate_debug_files (abfd, bfd_get_filename (abfd));
 
   bfd_map_over_sections (abfd, dump_dwarf_section, NULL);
 
-  if (separates)
-    bfd_map_over_sections (separates, dump_dwarf_section, NULL);
+  if (have_separates)
+    {
+      separate_info * i;
+
+      for (i = first_separate_info; i != NULL; i = i->next)
+	bfd_map_over_sections (i->handle, dump_dwarf_section, NULL);
+
+      /* The file handles are closed by the call to free_debug_memory() below.  */
+    }
 
   free_debug_memory ();
 }
@@ -3178,7 +3185,9 @@ dump_bfd_header (bfd *abfd)
 static void
 dump_bfd_private_header (bfd *abfd)
 {
-  bfd_print_private_bfd_data (abfd, stdout);
+  if (!bfd_print_private_bfd_data (abfd, stdout))
+    non_fatal (_("warning: private headers incomplete: %s"),
+	       bfd_errmsg (bfd_get_error ()));
 }
 
 static void

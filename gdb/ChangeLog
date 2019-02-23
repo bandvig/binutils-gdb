@@ -1,3 +1,131 @@
+2019-02-22  Simon Marchi  <simon.marchi@polymtl.ca>
+
+	* MAINTAINERS: Update my email address.
+
+2019-02-22  Simon Marchi  <simon.marchi@polymtl.ca>
+
+	* build-id.c (build_id_to_debug_bfd_1): New function.
+	(build_id_to_debug_bfd): Look for separate debug file in
+	sysroot.
+
+2019-02-22  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* gdbarch.sh: Update the copyright year range that is placed into
+	generated files.
+
+2019-02-22  Keith Seitz  <keiths@redhat.com>
+
+	PR symtab/23853
+	* linespec.c (create_sals_line_offset): Search for the default
+	symtab's filename instead of its fullname.
+
+2019-02-21  Alan Hayward  <alan.hayward@arm.com>
+
+	* NEWS: Update style defaults.
+
+2019-02-21  Alan Hayward  <alan.hayward@arm.com>
+
+	* main.c (captured_main_1): Disable styling in batch mode.
+
+2019-02-20  Tom Tromey  <tom@tromey.com>
+
+	* symtab.c (symtab_symbol_info): Fix typos.
+
+2019-02-20  Tom Tromey  <tromey@adacore.com>
+
+	* findcmd.c (_initialize_mem_search): Use upper case for
+	metasyntactic variables.
+
+2019-02-20  Alan Hayward  <alan.hayward@arm.com>
+
+	* aarch64-tdep.c (aarch64_add_reggroups): New function.
+	(aarch64_gdbarch_init): Call aarch64_add_reggroups.
+
+2019-02-19  Simon Marchi  <simon.marchi@polymtl.ca>
+
+	* top.h (source_file_name): Change to std::string.
+	* top.c (source_file_name): Likewise.
+	(command_line_input): Adjust.
+	* cli/cli-script.c (script_from_file): Adjust.
+
+2019-02-19  Tom Tromey  <tromey@adacore.com>
+
+	* ravenscar-thread.c
+	(ravenscar_thread_target::update_thread_list): Don't call
+	ada_build_task_list.
+	* ada-lang.h (ada_build_task_list): Don't declare.
+	* ada-tasks.c (struct ada_tasks_inferior_data)
+	<task_list_valid_p>: Now bool.
+	(read_known_tasks, ada_task_list_changed)
+	(ada_tasks_invalidate_inferior_data): Update.
+	(read_known_tasks_array): Return bool.
+	(read_known_tasks_list): Likewise.
+	(read_known_tasks): Return void.
+	(ada_build_task_list): Now static.
+
+2019-02-18  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* gdbtypes.c (type_align): Allow alignment of TYPE_CODE_METHODPTR
+	and TYPE_CODE_MEMBERPTR to be overridden by the gdbarch.
+
+2019-02-18  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* ada-task.c (_initialize_tasks): Use 'with_cleanup' register
+	variant for ada_tasks_pspace_data_handle and
+	ada_tasks_inferior_data_handle.
+	(ada_tasks_pspace_data_cleanup): New function.
+	(ada_tasks_inferior_data_cleanup): New function.
+
+2019-02-17  Tom Tromey  <tom@tromey.com>
+
+	* macrotab.h (macro_source_fullname): Return a std::string.
+	* macrotab.c (macro_include, check_for_redefinition)
+	(macro_undef, macro_lookup_definition, foreach_macro)
+	(foreach_macro_in_scope): Update.
+	(macro_source_fullname): Return a std::string.
+	* macrocmd.c (show_pp_source_pos): Update.
+
+2019-02-17  Tom Tromey  <tom@tromey.com>
+
+	* macrocmd.c (show_pp_source_pos): Style the file names.
+
+2019-02-17  Tom Tromey  <tom@tromey.com>
+
+	PR tui/24197:
+	* tui/tui-source.c (tui_set_source_content_nil): Rewrite.
+
+2019-02-17  Tom Tromey  <tom@tromey.com>
+
+	* ada-lang.c (user_select_syms): Use filtered printing.
+	* utils.c (wrap_style): New global.
+	(desired_style): Remove.
+	(emit_style_escape): Add stream parameter.
+	(set_output_style, reset_terminal_style, prompt_for_continue):
+	Update.
+	(flush_wrap_buffer): Only flush gdb_stdout.
+	(wrap_here): Set wrap_style.
+	(fputs_maybe_filtered): Clear the wrap buffer on exception.  Don't
+	treat escape sequences as a character.  Change when wrap buffer is
+	flushed.
+	(fputs_styled): Do not set the output style when the default is
+	requested.
+	* ui-style.h (struct ui_file_style) <is_default>: New method.
+	* source.c (print_source_lines_base): Emit escape sequences in one
+	piece.
+
+2019-02-17  Joel Brobecker  <brobecker@adacore.com>
+
+	* gdbtypes.c (type_align): Handle TYPE_CODE_RANGE the same as
+	integers and enumeration types.
+
+2019-02-17  Joel Brobecker  <brobecker@adacore.com>
+
+	* ada-lang.c (standard_lookup): Use ada_lookup_encoded_symbol
+	instead of lookup_symbol_in_language
+	(do_exact_match): New function.
+	(ada_get_symbol_name_matcher): Return do_exact_match when
+	doing a verbatim match.
+
 2019-02-15  Tom Tromey  <tromey@adacore.com>
 
 	* ravenscar-thread.c (ravenscar_thread_target::resume)
