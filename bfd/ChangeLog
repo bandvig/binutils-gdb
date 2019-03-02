@@ -1,3 +1,32 @@
+2019-03-01  Andreas Krebbel  <krebbel@linux.ibm.com>
+
+	This reverts commit 5a12586d44fa8d5dfc74cbca4f2f36a273a16335.
+	2019-01-14  Maamoun Tarsha  <maamountk@hotmail.com>
+
+	PR 20113
+	* elf32-s390.c (allocate_dynrelocs): Update comment.
+
+2019-02-28  Tamar Christina  <tamar.christina@arm.com>
+
+	* elf-eh-frame.c (_bfd_elf_write_section_eh_frame): Correct CIE parse.
+
+2019-02-28  Nick Clifton  <nickc@redhat.com>
+
+	PR 24273
+	* elf.c (bfd_elf_string_from_elf_section): Check for a string
+	section that is not NUL terminated.
+
+2019-02-27  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR ld/24276
+	* elf64-x86-64.c (elf_x86_64_check_relocs): Skip symbol defined
+	by linker when checking copy reloc on protected symbol.
+
+2019-02-24  Alan Modra  <amodra@gmail.com>
+
+	PR 24144
+	* pdp11.c (set_section_contents): Revert 2015-02-24 change.
+
 2019-02-20  Eric Tsai  <erictsai@cadence.com>
 
 	* elf32-xtensa.c (is_resolvable_asm_expansion): Scan output
