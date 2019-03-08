@@ -106,10 +106,8 @@ static enum exec_direction_kind default_execution_direction
 static std::unordered_map<const target_info *, target_open_ftype *>
   target_factories;
 
-/* The initial current target, so that there is always a semi-valid
-   current target.  */
+/* The singleton debug target.  */
 
-static struct target_ops *the_dummy_target;
 static struct target_ops *the_debug_target;
 
 /* The target stack.  */
@@ -3168,7 +3166,6 @@ target_announce_detach (int from_tty)
   pid = inferior_ptid.pid ();
   printf_unfiltered (_("Detaching from program: %s, %s\n"), exec_file,
 		     target_pid_to_str (ptid_t (pid)));
-  gdb_flush (gdb_stdout);
 }
 
 /* The inferior process has died.  Long live the inferior!  */
@@ -3240,6 +3237,10 @@ dummy_make_corefile_notes (struct target_ops *self,
 
 #include "target-delegates.c"
 
+/* The initial current target, so that there is always a semi-valid
+   current target.  */
+
+static dummy_target the_dummy_target;
 
 static const target_info dummy_target_info = {
   "None",
@@ -3977,8 +3978,7 @@ set_write_memory_permission (const char *args, int from_tty,
 void
 initialize_targets (void)
 {
-  the_dummy_target = new dummy_target ();
-  push_target (the_dummy_target);
+  push_target (&the_dummy_target);
 
   the_debug_target = new debug_target ();
 
