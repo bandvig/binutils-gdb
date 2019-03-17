@@ -37,6 +37,7 @@
    coff_data (abfd).  */
 
 #include "sysdep.h"
+#include <limits.h>
 #include "bfd.h"
 #include "libbfd.h"
 #include "coff/internal.h"
@@ -2006,6 +2007,10 @@ coff_get_normalized_symtab (bfd *abfd)
   return internal;
 }
 
+#if GCC_VERSION >= 4003
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
 long
 coff_get_reloc_upper_bound (bfd *abfd, sec_ptr asect)
 {
@@ -2014,8 +2019,16 @@ coff_get_reloc_upper_bound (bfd *abfd, sec_ptr asect)
       bfd_set_error (bfd_error_invalid_operation);
       return -1;
     }
+  if (asect->reloc_count >= LONG_MAX / sizeof (arelent *))
+    {
+      bfd_set_error (bfd_error_file_too_big);
+      return -1;
+    }
   return (asect->reloc_count + 1) * sizeof (arelent *);
 }
+#if GCC_VERSION >= 4003
+# pragma GCC diagnostic pop
+#endif
 
 asymbol *
 coff_make_empty_symbol (bfd *abfd)
@@ -2638,6 +2651,9 @@ _bfd_coff_section_already_linked (bfd *abfd,
   struct bfd_section_already_linked *l;
   struct bfd_section_already_linked_hash_entry *already_linked_list;
   struct coff_comdat_info *s_comdat;
+
+  if (sec->output_section == bfd_abs_section_ptr)
+    return FALSE;
 
   flags = sec->flags;
   if ((flags & SEC_LINK_ONCE) == 0)

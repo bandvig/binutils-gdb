@@ -1,3 +1,79 @@
+2019-03-17  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR gas/24353
+	* config/tc-i386.c: Include <limits.h> if it exists and try
+	including <sys/param.h> if we have it.
+	(INT_MAX): Define if not defined.
+	(md_parse_option): Set optimize to INT_MAX for -Os.
+	* testsuite/gas/i386/optimize-2.s: Add a test.
+	* testsuite/gas/i386/x86-64-optimize-3.s: Likewise.
+	* testsuite/gas/i386/optimize-2.d: Updated.
+	* testsuite/gas/i386/x86-64-optimize-3.d: Likewise.
+
+2019-03-17  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR gas/24352
+	* config/tc-i386.c (optimize_encoding): Encode 512-bit EVEX
+	with 128-bit VEX encoding only when AVX is enabled and with
+	128-bit EVEX encoding only when AVX512VL is enabled.
+	* testsuite/gas/i386/i386.exp: Run PR gas/24352 tests.
+	* testsuite/gas/i386/optimize-6.s: New file.
+	* testsuite/gas/i386/optimize-6a.d: Likewise.
+	* testsuite/gas/i386/optimize-6b.d: Likewise.
+	* testsuite/gas/i386/optimize-6c.d: Likewise.
+	* testsuite/gas/i386/x86-64-optimize-7.s: Likewise.
+	* testsuite/gas/i386/x86-64-optimize-7a.d: Likewise.
+	* testsuite/gas/i386/x86-64-optimize-7b.d: Likewise.
+	* testsuite/gas/i386/x86-64-optimize-7c.d: Likewise.
+	* testsuite/gas/i386/x86-64-optimize-2.d: Updated.
+
+2019-03-15  Li Hao  <li.hao296@zte.com.cn>
+
+	PR 24308
+	* config/tc-i386.c (parse_insn): Check mnemp before using it to
+	determine if a suffix can be trimmed.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (out_set_addr): Align relocation within .debug_line.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (out_debug_line): Pad size of .debug_line section.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (out_debug_str): Use octets for .debug_string pointers.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (out_debug_line): Use octets for .debug_line prologue.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (out_debug_line): Use octets for dwarf2 headers.
+	(out_debug_aranges, out_debug_info): Likewise.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* symbols.h (symbol_temp_new_now_octets): Declare.
+	(symbol_set_value_now_octets, symbol_octets_p): Declare.
+	* symbols.c (struct symbol_flags): New member sy_octets.
+	(symbol_temp_new_now_octets): New function.
+	(resolve_symbol_value): Return octets instead of bytes if
+	sy_octets is set.
+	(symbol_set_value_now_octets): New function.
+	(symbol_octets_p): New function.
+
+2019-03-13  Christian Eggers  <ceggers@gmx.de>
+
+	* dwarf2dbg.c (dwarf2_emit_insn): Fix calculation of line info offset.
+
+2019-03-12  Andreas Krebbel  <krebbel@linux.ibm.com>
+
+	* testsuite/gas/s390/zarch-arch13.s: Adjust testcase to optable changes.
+	* testsuite/gas/s390/zarch-arch13.d: Likewise.
+
 2019-02-27  Matthew Malcomson  <matthew.malcomson@arm.com>
 
 	* testsuite/gas/aarch64/dotproduct.d: Use multiple "as" lines.

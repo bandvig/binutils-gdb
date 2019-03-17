@@ -1,3 +1,514 @@
+2019-03-16  Eli Zaretskii  <eliz@gnu.org>
+
+	* source-cache.c (source_cache::get_source_lines): Call
+	find_source_lines to initialize s->nlines.  This fixes vertical
+	scrolling of TUI source window when the DOWN arrow is pressed.
+
+2019-03-16  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* auto-load.c (_initialize_auto_load): Fix 'This options has'.
+	linux-thread-db.c (_initialize_thread_db): Likewise.
+
+2019-03-16  Eli Zaretskii  <eliz@gnu.org>
+
+	* tui/tui-winsource.c (tui_show_source_line): Revert "Use
+	wclrtoeol in tui_show_source_line".  This reverts changes made in
+	commit 4a3045920bbe4e50a0f4920b0fdc4e88ef23015c.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* symtab.h (struct minimal_symbol): Derive from
+	general_symbol_info.
+	(MSYMBOL_VALUE, MSYMBOL_VALUE_RAW_ADDRESS)
+	(MSYMBOL_VALUE_ADDRESS, MSYMBOL_VALUE_BYTES)
+	(MSYMBOL_BLOCK_VALUE, MSYMBOL_VALUE_CHAIN, MSYMBOL_LANGUAGE)
+	(MSYMBOL_SECTION, MSYMBOL_OBJ_SECTION, MSYMBOL_NATURAL_NAME)
+	(MSYMBOL_LINKAGE_NAME, MSYMBOL_DEMANGLED_NAME)
+	(MSYMBOL_SEARCH_NAME): Update.
+	(MSYMBOL_SET_LANGUAGE, MSYMBOL_SET_NAMES): Remove.
+	* solib.c (gdb_bfd_lookup_symbol_from_symtab): Don't use memset.
+	* minsyms.c (minimal_symbol_reader::record_full): Update.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* minsyms.c (minimal_symbol_reader::install): Use memcpy.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* objfiles.h (struct objfile_per_bfd_storage) <msymbols>: Now a
+	unique_xmalloc_ptr.
+	(objfile::msymbols_range::begin, objfile::msymbols_range::end):
+	Update.
+	* minsyms.c (lookup_minimal_symbol_by_pc_section)
+	(build_minimal_symbol_hash_tables)
+	(minimal_symbol_reader::install): Update.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* symtab.c (create_demangled_names_hash): Update.
+	(symbol_set_names): Update.
+	* objfiles.h (struct objfile_per_bfd_storage)
+	<demangled_names_hash>: Now an htab_up.
+	* objfiles.c (objfile_per_bfd_storage): Simplify.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* objfiles.h (struct objfile_per_bfd_storage): Declare
+	destructor.
+	* objfiles.c (objfile_per_bfd_storage::~objfile_per_bfd_storage):
+	New.
+	(get_objfile_bfd_data): Use new.  Don't initialize
+	language_of_main.
+	(free_objfile_per_bfd_storage): Remove.
+	(objfile_bfd_data_free, objfile::~objfile): Use delete.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* symfile.c (reread_symbols): Update.
+	* objfiles.c (objfile::objfile): Update.
+	* minsyms.h (terminate_minimal_symbol_table): Don't declare.
+	* minsyms.c (lookup_minimal_symbol_by_pc_section): Update
+	comment.
+	(minimal_symbol_reader::install): Update.
+	(terminate_minimal_symbol_table): Remove.
+	* jit.c (jit_object_close_impl): Update.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* minsyms.c (minimal_symbol_reader::record_full): Remove some
+	initializations.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* objfiles.h (struct objfile_per_bfd_storage)
+	<demangled_hash_languages>: Now a bitset.
+	* minsyms.c (add_minsym_to_demangled_hash_table): Update.
+	(lookup_minimal_symbol): Update.
+
+2019-03-15  Tom Tromey  <tom@tromey.com>
+
+	* minsyms.h (class minimal_symbol_reader) <record_with_info>:
+	Don't return the symbol.
+	* coffread.c (record_minimal_symbol): Use record_full.
+
+2019-03-14  Eli Zaretskii  <eliz@gnu.org>
+
+	The MS-Windows port of ncurses fails to switch to a color pair if
+	one or both of the colors are the implicit default colors.  This
+	change records the default colors when TUI is initialized, and
+	then specifies them explicitly when a color pair uses the default
+	colors.  This allows color styling in TUI mode on MS-Windows.
+
+	* tui/tui-io.c [__MINGW32__]: Include windows.h.  Declare
+	ncurses_norm_attr.
+	(tui_initialize_io) [__MINGW32__]: Record the default terminal
+	colors in ncurses_norm_attr.
+	(apply_ansi_escape) [__MINGW32__]: If a color in a color pair is
+	"none", replace it with the default color recorded in
+	ncurses_norm_attr.
+
+2019-03-14  Tom Tromey  <tromey@adacore.com>
+
+	* source-cache.h (class source_cache) <get_source_lines>: Return
+	std::string.
+	* source-cache.c (source_cache::extract_lines): Handle case where
+	first_pos==npos.  Return std::string.
+	(source_cache::get_source_lines): Update.
+
+2019-03-14  Tom Tromey  <tromey@adacore.com>
+
+	* NEWS: Add item for "style sources" commands.
+	* source-cache.c (source_cache::get_source_lines): Check
+	source_styling.
+	* cli/cli-style.c (source_styling): New global.
+	(_initialize_cli_style): Add "style sources" commands.
+	(show_style_sources): New function.
+	* cli/cli-style.h (source_styling): Declare.
+
+2019-03-14  Pedro Alves  <palves@redhat.com>
+	    Tom Tromey  <tromey@adacore.com>
+
+	* tui/tui-winsource.h (tui_refill_source_window): Declare.
+	* tui/tui-winsource.c (tui_refill_source_window): New function,
+	from...
+	(tui_horizontal_source_scroll): ... here.  Move some logic.
+	* cli/cli-style.c (set_style_enabled): Notify new observable.
+	* tui/tui-hooks.c (tui_redisplay_source): New function.
+	(tui_attach_detach_observers): Attach or detach
+	tui_redisplay_source.
+	* observable.h (source_styling_changed): New observable.
+	* observable.c: Define source_styling_changed observable.
+
+2019-03-13  Tom Tromey  <tromey@adacore.com>
+
+	* i386-gnu-nat.c (i386_gnu_nat_target::fetch_registers)
+	(i386_gnu_nat_target::store_registers): Update.
+	* target-debug.h (target_debug_print_std_string): New macro.
+	* x86-linux-nat.c (x86_linux_nat_target::enable_btrace): Update.
+	* windows-tdep.c (display_one_tib): Update.
+	* tui/tui-stack.c (tui_make_status_line): Update.
+	* top.c (print_inferior_quit_action): Update.
+	* thread.c (thr_try_catch_cmd): Update.
+	(add_thread_with_info): Update.
+	(thread_target_id_str): Update.
+	(thr_try_catch_cmd): Update.
+	(thread_command): Update.
+	(thread_find_command): Update.
+	* record-btrace.c (record_btrace_target::info_record)
+	(record_btrace_resume_thread, record_btrace_target::resume)
+	(record_btrace_cancel_resume, record_btrace_step_thread)
+	(record_btrace_target::wait, record_btrace_target::wait)
+	(record_btrace_target::wait, record_btrace_target::stop): Update.
+	* progspace.c (print_program_space): Update.
+	* process-stratum-target.c
+	(process_stratum_target::thread_address_space): Update.
+	* linux-fork.c (linux_fork_mourn_inferior)
+	(detach_checkpoint_command, info_checkpoints_command)
+	(linux_fork_context): Update.
+	(linux_fork_detach): Update.
+	(class scoped_switch_fork_info): Update.
+	(delete_checkpoint_command): Update.
+	* infrun.c (follow_fork_inferior): Update.
+	(follow_fork_inferior): Update.
+	(proceed_after_vfork_done): Update.
+	(handle_vfork_child_exec_or_exit): Update.
+	(follow_exec): Update.
+	(displaced_step_prepare_throw): Update.
+	(displaced_step_restore): Update.
+	(start_step_over): Update.
+	(resume_1): Update.
+	(clear_proceed_status_thread): Update.
+	(proceed): Update.
+	(print_target_wait_results): Update.
+	(do_target_wait): Update.
+	(context_switch): Update.
+	(stop_all_threads): Update.
+	(restart_threads): Update.
+	(finish_step_over): Update.
+	(handle_signal_stop): Update.
+	(switch_back_to_stepped_thread): Update.
+	(keep_going_pass_signal): Update.
+	(print_exited_reason): Update.
+	(normal_stop): Update.
+	* inferior.c (inferior_pid_to_str): Change return type.
+	(print_selected_inferior): Update.
+	(add_inferior): Update.
+	(detach_inferior): Update.
+	* dummy-frame.c (fprint_dummy_frames): Update.
+	* dcache.c (dcache_info_1): Update.
+	* btrace.c (btrace_enable, btrace_disable, btrace_teardown)
+	(btrace_fetch, btrace_clear): Update.
+	* linux-tdep.c (linux_core_pid_to_str): Change return type.
+	* i386-cygwin-tdep.c (i386_windows_core_pid_to_str): Change return
+	type.
+	* fbsd-tdep.c (fbsd_core_pid_to_str): Change return type.
+	* sol2-tdep.h (sol2_core_pid_to_str): Change return type.
+	* sol2-tdep.c (sol2_core_pid_to_str): Change return type.
+	* gdbarch.c, gdbarch.h: Rebuild.
+	* gdbarch.sh (core_pid_to_str): Change return type.
+	* windows-nat.c (struct windows_nat_target) <pid_to_str>: Change
+	return type.
+	(windows_nat_target::pid_to_str): Change return type.
+	(windows_delete_thread): Update.
+	(windows_nat_target::attach): Update.
+	(windows_nat_target::files_info): Update.
+	* target-delegates.c: Rebuild.
+	* sol-thread.c (class sol_thread_target) <pid_to_str>: Change
+	return type.
+	(sol_thread_target::pid_to_str): Change return type.
+	* remote.c (class remote_target) <pid_to_str>: Change return
+	type.
+	(remote_target::pid_to_str): Change return type.
+	(extended_remote_target::attach, remote_target::remote_stop_ns)
+	(remote_target::remote_notif_remove_queued_reply)
+	(remote_target::push_stop_reply, remote_target::disable_btrace):
+	Update.
+	(extended_remote_target::attach): Update.
+	* remote-sim.c (struct gdbsim_target) <pid_to_str>: Change return
+	type.
+	(gdbsim_target::pid_to_str): Change return type.
+	* ravenscar-thread.c (struct ravenscar_thread_target)
+	<pid_to_str>: Change return type.
+	(ravenscar_thread_target::pid_to_str): Change return type.
+	* procfs.c (class procfs_target) <pid_to_str>: Change return
+	type.
+	(procfs_target::pid_to_str): Change return type.
+	(procfs_target::attach): Update.
+	(procfs_target::detach): Update.
+	(procfs_target::fetch_registers): Update.
+	(procfs_target::store_registers): Update.
+	(procfs_target::wait): Update.
+	(procfs_target::files_info): Update.
+	* obsd-nat.c (obsd_nat_target::pid_to_str): Change return type.
+	* nto-procfs.c (struct nto_procfs_target) <pid_to_str>: Change
+	return type.
+	(nto_procfs_target::pid_to_str): Change return type.
+	(nto_procfs_target::files_info, nto_procfs_target::attach): Update.
+	* linux-thread-db.c (class thread_db_target) <pid_to_str>: Change
+	return type.
+	* linux-nat.c (linux_nat_target::pid_to_str): Change return type.
+	(exit_lwp): Update.
+	(attach_proc_task_lwp_callback, get_detach_signal)
+	(detach_one_lwp, resume_lwp, linux_nat_target::resume)
+	(linux_nat_target::resume, wait_lwp, stop_callback)
+	(maybe_clear_ignore_sigint, stop_wait_callback, status_callback)
+	(save_stop_reason, select_event_lwp, linux_nat_filter_event)
+	(linux_nat_wait_1, resume_stopped_resumed_lwps)
+	(linux_nat_target::wait, linux_nat_stop_lwp): Update.
+	* inf-ptrace.c (inf_ptrace_target::pid_to_str): Change return
+	type.
+	(inf_ptrace_target::attach): Update.
+	(inf_ptrace_target::files_info): Update.
+	* go32-nat.c (struct go32_nat_target) <pid_to_str>: Change return
+	type.
+	(go32_nat_target::pid_to_str): Change return type.
+	* gnu-nat.c (gnu_nat_target::pid_to_str): Change return type.
+	(gnu_nat_target::wait): Update.
+	(gnu_nat_target::wait): Update.
+	(gnu_nat_target::resume): Update.
+	* fbsd-nat.c (fbsd_nat_target::pid_to_str): Change return type.
+	(fbsd_nat_target::wait): Update.
+	* darwin-nat.c (darwin_nat_target::pid_to_str): Change return
+	type.
+	(darwin_nat_target::attach): Update.
+	* corelow.c (class core_target) <pid_to_str>: Change return type.
+	(core_target::pid_to_str): Change return type.
+	* target.c (normal_pid_to_str): Change return type.
+	(default_pid_to_str): Likewise.
+	(target_pid_to_str): Change return type.
+	(target_translate_tls_address): Update.
+	(target_announce_detach): Update.
+	* bsd-uthread.c (struct bsd_uthread_target) <pid_to_str>: Change
+	return type.
+	(bsd_uthread_target::pid_to_str): Change return type.
+	* bsd-kvm.c (class bsd_kvm_target) <pid_to_str>: Change return
+	type.
+	(bsd_kvm_target::pid_to_str): Change return type.
+	* aix-thread.c (class aix_thread_target) <pid_to_str>: Change
+	return type.
+	(aix_thread_target::pid_to_str): Change return type.
+	* target.h (struct target_ops) <pid_to_str>: Change return type.
+	(target_pid_to_str, normal_pid_to_str): Likewise.
+	* obsd-nat.h (class obsd_nat_target) <pid_to_str>: Change return
+	type.
+	* linux-nat.h (class linux_nat_target) <pid_to_str>: Change return
+	type.
+	* inf-ptrace.h (struct inf_ptrace_target) <pid_to_str>: Change
+	return type.
+	* gnu-nat.h (struct gnu_nat_target) <pid_to_str>: Change return
+	type.
+	* fbsd-nat.h (class fbsd_nat_target) <pid_to_str>: Change return
+	type.
+	* darwin-nat.h (class darwin_nat_target) <pid_to_str>: Change
+	return type.
+
+2019-03-13  Simon Marchi  <simon.marchi@ericsson.com>
+
+	* NEWS: Mention that the new default MI version is 3.  Mention
+	changes to the output of commands and events that deal with
+	multi-location breakpoints.
+	* breakpoint.c: Include "mi/mi-out.h".
+	(print_one_breakpoint): Change output syntax if using MI version
+	>= 3.
+	* mi/mi-main.h (mi_cmd_fix_multi_location_breakpoint_output):
+	New.
+	(mi_multi_location_breakpoint_output_fixed): New.
+	* mi/mi-main.c (fix_multi_location_breakpoint_output): New.
+	(mi_cmd_fix_multi_location_breakpoint_output): New.
+	(mi_multi_location_breakpoint_output_fixed): New.
+	* mi/mi-cmds.c (mi_cmds): Register command
+	-fix-multi-location-breakpoint-output.
+	* mi/mi-out.c (mi_out_new): Instantiate version 3 when using
+	interpreter "mi".
+
+2019-03-13  Simon Marchi  <simon.marchi@polymtl.ca>
+
+	* mi/mi-out.h (mi_out_new): Change parameter to const char *.
+	* mi/mi-out.c (mi_out_new): Change parameter to const char *,
+	instantiate mi_ui_out based on interpreter name.
+	* mi/mi-interp.c (mi_interp::init): Use the new mi_out_new.
+	* mi/mi-main.c (mi_load_progress): Likewise.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* NEWS: Combine separate "New targets" sections for 8.3.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* ppc-fbsd-tdep.c (ppcfbsd_get_thread_local_address): New.
+	(ppcfbsd_init_abi): Install gdbarch
+	"fetch_tls_load_module_address" and "get_thread_local_address"
+	methods.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* riscv-fbsd-tdep.c (riscv_fbsd_get_thread_local_address): New.
+	(riscv_fbsd_init_abi): Install gdbarch
+	"fetch_tls_load_module_address" and "get_thread_local_address"
+	methods.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* i386-fbsd-tdep.c (i386fbsd_get_thread_local_address): New.
+	(i386fbsd_init_abi): Install gdbarch
+	"fetch_tls_load_module_address" and "get_thread_local_address"
+	methods.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* amd64-fbsd-tdep.c (amd64fbsd_get_thread_local_address): New.
+	(amd64fbsd_init_abi): Install gdbarch
+	"fetch_tls_load_module_address" and "get_thread_local_address"
+	methods.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* fbsd-tdep.c (fbsd_pspace_data_handle): New variable.
+	(struct fbsd_pspace_data): New type.
+	(get_fbsd_pspace_data, fbsd_pspace_data_cleanup)
+	(fbsd_read_integer_by_name, fbsd_fetch_rtld_offsets)
+	(fbsd_get_tls_index, fbsd_get_thread_local_address): New function.
+	(_initialize_fbsd_tdep): Initialize 'fbsd_pspace_data_handle'.
+	* fbsd-tdep.c (fbsd_get_thread_local_address): New prototype.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* gdbtypes.c (lookup_struct_elt): New function.
+	(lookup_struct_elt_type): Reimplement via lookup_struct_elt.
+	* gdbtypes.h (struct struct_elt): New type.
+	(lookup_struct_elt): New prototype.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* gdbtypes.c (lookup_struct_elt_type): Update comment and
+	remove disabled code block.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* gdbarch.sh (get_thread_local_address): New method.
+	* gdbarch.h, gdbarch.c: Regenerate.
+	* target.c (target_translate_tls_address): Use
+	gdbarch_get_thread_local_address if present instead of
+	target::get_thread_local_address.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* target.h (target::get_thread_local_address): Update comment.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* solib-svr4.c (svr4_fetch_objfile_link_map): Look for
+	objfile->separate_debug_objfile_backlink if not NULL.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* amd64-bsd-nat.c (amd64bsd_fetch_inferior_registers): Use
+	tdep->fsbase_regnum instead of constants for fs_base and gs_base.
+	(amd64bsd_store_inferior_registers): Likewise.
+	* amd64-fbsd-nat.c (amd64_fbsd_nat_target::read_description):
+	Enable segment base registers.
+	* i386-bsd-nat.c (i386bsd_fetch_inferior_registers): Use
+	PT_GETFSBASE and PT_GETGSBASE.
+	(i386bsd_store_inferior_registers): Use PT_SETFSBASE and
+	PT_SETGSBASE.
+	* i386-fbsd-nat.c (i386_fbsd_nat_target::read_description): Enable
+	segment base registers.
+	* i386-fbsd-tdep.c (i386fbsd_core_read_description): Likewise.
+
+2019-03-12  John Baldwin  <jhb@FreeBSD.org>
+
+	* amd64-fbsd-nat.c (amd64_fbsd_nat_target::read_description):
+	Update calls to i386_target_description to add 'segments'
+	parameter.
+	* amd64-tdep.c (amd64_init_abi): Set tdep->fsbase_regnum.  Don't
+	add segment base registers.
+	* arch/i386.c (i386_create_target_description): Add 'segments'
+	parameter to enable segment base registers.
+	* arch/i386.h (i386_create_target_description): Likewise.
+	* features/i386/32bit-segments.xml: New file.
+	* features/i386/32bit-segments.c: Generate.
+	* i386-fbsd-nat.c (i386_fbsd_nat_target::read_description): Update
+	call to i386_target_description to add 'segments' parameter.
+	* i386-fbsd-tdep.c (i386fbsd_core_read_description): Likewise.
+	* i386-go32-tdep.c (i386_go32_init_abi): Likewise.
+	* i386-linux-tdep.c (i386_linux_read_description): Likewise.
+	* i386-tdep.c (i386_validate_tdesc_p): Add segment base registers
+	if feature is present.
+	(i386_gdbarch_init): Pass I386_NUM_REGS to set_gdbarch_num_regs.
+	Add 'segments' parameter to call to i386_target_description.
+	(i386_target_description): Add 'segments' parameter to enable
+	segment base registers.
+	(_initialize_i386_tdep) [GDB_SELF_TEST]: Add 'segments' parameter
+	to call to i386_target_description.
+	* i386-tdep.h (struct gdbarch_tdep): Add 'fsbase_regnum'.
+	(enum i386_regnum): Add I386_FSBASE_REGNUM and I386_GSBASE_REGNUM.
+	Define I386_NUM_REGS.
+	(i386_target_description): Add 'segments' parameter to enable
+	segment base registers.
+
+2019-03-12  Eli Zaretskii  <eliz@gnu.org>
+
+	PR/24325
+	* source-cache.c: #undef open and close, to avoid unresolved
+	externals during linking.
+
+2019-03-12  Tom Tromey  <tromey@adacore.com>
+
+	* remote.c (magic_null_ptid, not_sent_ptid, any_thread_ptid): Now
+	const.  Add initializers.
+	(_initialize_remote): Don't initialize ptid globals.
+
+2019-03-12  Pedro Alves  <palves@redhat.com>
+
+	* yy-remap.h [TEST_CPNAMES] (YYFPRINTF): Don't define.
+
+2019-03-12  Pedro Alves  <palves@redhat.com>
+
+	* cp-name-parser.y (main): Remove unused 'len' variable.
+
+2019-03-12  Tom Tromey  <tromey@adacore.com>
+
+	* common/ptid.c (null_ptid, minus_one_ptid): Now const.
+	* common/ptid.h (null_ptid, minus_one_ptid): Now const.
+
+2019-03-12  Tom Tromey  <tromey@adacore.com>
+
+	* linux-nat.c (iterate_over_lwps): Update.
+	(stop_callback): Remove parameter.
+	(stop_wait_callback, detach_callback, resume_set_callback)
+	(select_singlestep_lwp_callback, set_ignore_sigint)
+	(status_callback, resumed_callback, resume_clear_callback)
+	(kill_callback, kill_wait_callback, linux_nat_stop_lwp): Remove
+	data parameter.
+	(linux_nat_target::detach, linux_nat_target::resume)
+	(linux_stop_and_wait_all_lwps, select_event_lwp)
+	(linux_nat_filter_event, linux_nat_wait_1)
+	(linux_nat_target::kill, linux_nat_target::stop)
+	(linux_nat_target::stop): Update.
+	(linux_nat_resume_callback): Change type.
+	(resume_stopped_resumed_lwps, count_events_callback)
+	(select_event_lwp_callback): Likewise.
+	(linux_stop_lwp, linux_nat_stop_lwp): Update.
+	* arm-linux-nat.c (struct update_registers_data): Remove.
+	(update_registers_callback): Change type.
+	(arm_linux_insert_hw_breakpoint1): Update.
+	* nat/x86-linux-dregs.c (update_debug_registers_callback): Remove
+	parameter.
+	(x86_linux_dr_set_addr): Update.
+	(x86_linux_dr_set_control): Update.
+	* nat/linux-nat.h (iterate_over_lwps_ftype): Remove parameter.
+	(iterate_over_lwps): Use gdb::function_view.
+	* nat/aarch64-linux-hw-point.c (struct
+	aarch64_dr_update_callback_param): Remove.
+	(debug_reg_change_callback): Change type.
+	(aarch64_notify_debug_reg_change): Update.
+	* s390-linux-nat.c (s390_refresh_per_info): Update.
+
+2019-03-11  Tom Tromey  <tromey@adacore.com>
+
+	* dwarf2read.c (dwarf2_find_containing_comp_unit): Remove
+	redundant assignment to "this_cu".
+
 2019-03-08  Simon Marchi  <simon.marchi@efficios.com>
 
 	* gdbtypes.c (rank_one_type): Remove unnecessary cases from switch.

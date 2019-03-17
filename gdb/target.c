@@ -92,7 +92,7 @@ static int dummy_find_memory_regions (struct target_ops *self,
 static char *dummy_make_corefile_notes (struct target_ops *self,
 					bfd *ignore1, int *ignore2);
 
-static const char *default_pid_to_str (struct target_ops *ops, ptid_t ptid);
+static std::string default_pid_to_str (struct target_ops *ops, ptid_t ptid);
 
 static enum exec_direction_kind default_execution_direction
     (struct target_ops *self);
@@ -698,8 +698,9 @@ target_translate_tls_address (struct objfile *objfile, CORE_ADDR offset)
 {
   volatile CORE_ADDR addr = 0;
   struct target_ops *target = current_top_target ();
+  struct gdbarch *gdbarch = target_gdbarch ();
 
-  if (gdbarch_fetch_tls_load_module_address_p (target_gdbarch ()))
+  if (gdbarch_fetch_tls_load_module_address_p (gdbarch))
     {
       ptid_t ptid = inferior_ptid;
 
@@ -708,10 +709,14 @@ target_translate_tls_address (struct objfile *objfile, CORE_ADDR offset)
 	  CORE_ADDR lm_addr;
 	  
 	  /* Fetch the load module address for this objfile.  */
-	  lm_addr = gdbarch_fetch_tls_load_module_address (target_gdbarch (),
+	  lm_addr = gdbarch_fetch_tls_load_module_address (gdbarch,
 	                                                   objfile);
 
-	  addr = target->get_thread_local_address (ptid, lm_addr, offset);
+	  if (gdbarch_get_thread_local_address_p (gdbarch))
+	    addr = gdbarch_get_thread_local_address (gdbarch, ptid, lm_addr,
+						     offset);
+	  else
+	    addr = target->get_thread_local_address (ptid, lm_addr, offset);
 	}
       /* If an error occurred, print TLS related messages here.  Otherwise,
          throw the error to some higher catcher.  */
@@ -739,24 +744,26 @@ target_translate_tls_address (struct objfile *objfile, CORE_ADDR offset)
 		         " thread-local variables in\n"
 		         "the shared library `%s'\n"
 		         "for %s"),
-		       objfile_name (objfile), target_pid_to_str (ptid));
+		       objfile_name (objfile),
+		       target_pid_to_str (ptid).c_str ());
 	      else
 		error (_("The inferior has not yet allocated storage for"
 		         " thread-local variables in\n"
 		         "the executable `%s'\n"
 		         "for %s"),
-		       objfile_name (objfile), target_pid_to_str (ptid));
+		       objfile_name (objfile),
+		       target_pid_to_str (ptid).c_str ());
 	      break;
 	    case TLS_GENERIC_ERROR:
 	      if (objfile_is_library)
 		error (_("Cannot find thread-local storage for %s, "
 		         "shared library %s:\n%s"),
-		       target_pid_to_str (ptid),
+		       target_pid_to_str (ptid).c_str (),
 		       objfile_name (objfile), ex.message);
 	      else
 		error (_("Cannot find thread-local storage for %s, "
 		         "executable file %s:\n%s"),
-		       target_pid_to_str (ptid),
+		       target_pid_to_str (ptid).c_str (),
 		       objfile_name (objfile), ex.message);
 	      break;
 	    default:
@@ -766,8 +773,6 @@ target_translate_tls_address (struct objfile *objfile, CORE_ADDR offset)
 	}
       END_CATCH
     }
-  /* It wouldn't be wrong here to try a gdbarch method, too; finding
-     TLS is an ABI-specific thing.  But we don't do that yet.  */
   else
     error (_("Cannot find thread-local variables on this target"));
 
@@ -2070,7 +2075,7 @@ default_target_wait (struct target_ops *ops,
   return minus_one_ptid;
 }
 
-const char *
+std::string
 target_pid_to_str (ptid_t ptid)
 {
   return current_top_target ()->pid_to_str (ptid);
@@ -3165,7 +3170,7 @@ target_announce_detach (int from_tty)
 
   pid = inferior_ptid.pid ();
   printf_unfiltered (_("Detaching from program: %s, %s\n"), exec_file,
-		     target_pid_to_str (ptid_t (pid)));
+		     target_pid_to_str (ptid_t (pid)).c_str ());
 }
 
 /* The inferior process has died.  Long live the inferior!  */
@@ -3202,16 +3207,13 @@ generic_mourn_inferior (void)
 /* Convert a normal process ID to a string.  Returns the string in a
    static buffer.  */
 
-const char *
+std::string
 normal_pid_to_str (ptid_t ptid)
 {
-  static char buf[32];
-
-  xsnprintf (buf, sizeof buf, "process %d", ptid.pid ());
-  return buf;
+  return string_printf ("process %d", ptid.pid ());
 }
 
-static const char *
+static std::string
 default_pid_to_str (struct target_ops *ops, ptid_t ptid)
 {
   return normal_pid_to_str (ptid);

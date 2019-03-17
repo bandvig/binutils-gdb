@@ -33,6 +33,17 @@
 #include "elf/x86-64.h"
 #include "opcodes/i386-init.h"
 
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#else
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifndef INT_MAX
+#define INT_MAX (int) (((unsigned) (-1)) >> 1)
+#endif
+#endif
+
 #ifndef REGISTER_WARNINGS
 #define REGISTER_WARNINGS 1
 #endif
@@ -3975,10 +3986,13 @@ optimize_encoding (void)
 		   && !i.rounding
 		   && is_evex_encoding (&i.tm)
 		   && (i.vec_encoding != vex_encoding_evex
+		       || cpu_arch_flags.bitfield.cpuavx
+		       || cpu_arch_isa_flags.bitfield.cpuavx
+		       || cpu_arch_flags.bitfield.cpuavx512vl
+		       || cpu_arch_isa_flags.bitfield.cpuavx512vl
 		       || i.tm.cpu_flags.bitfield.cpuavx512vl
 		       || (i.tm.operand_types[2].bitfield.zmmword
-			   && i.types[2].bitfield.ymmword)
-		       || cpu_arch_isa_flags.bitfield.cpuavx512vl)))
+			   && i.types[2].bitfield.ymmword))))
 	   && ((i.tm.base_opcode == 0x55
 		|| i.tm.base_opcode == 0x6655
 		|| i.tm.base_opcode == 0x66df
@@ -4032,14 +4046,19 @@ optimize_encoding (void)
        */
       if (is_evex_encoding (&i.tm))
 	{
-	  if (i.vec_encoding == vex_encoding_evex)
-	    i.tm.opcode_modifier.evex = EVEX128;
-	  else
+	  if (i.vec_encoding != vex_encoding_evex
+	      && (cpu_arch_flags.bitfield.cpuavx
+		  || cpu_arch_isa_flags.bitfield.cpuavx))
 	    {
 	      i.tm.opcode_modifier.vex = VEX128;
 	      i.tm.opcode_modifier.vexw = VEXW0;
 	      i.tm.opcode_modifier.evex = 0;
 	    }
+	  else if (cpu_arch_flags.bitfield.cpuavx512vl
+		   || cpu_arch_isa_flags.bitfield.cpuavx512vl)
+	    i.tm.opcode_modifier.evex = EVEX128;
+	  else
+	    return;
 	}
       else if (i.tm.operand_types[0].bitfield.regmask)
 	{
@@ -4561,46 +4580,50 @@ parse_insn (char *line, char *mnemonic)
   if (!current_templates)
     {
 check_suffix:
-      /* See if we can get a match by trimming off a suffix.  */
-      switch (mnem_p[-1])
+      if (mnem_p > mnemonic)
 	{
-	case WORD_MNEM_SUFFIX:
-	  if (intel_syntax && (intel_float_operand (mnemonic) & 2))
-	    i.suffix = SHORT_MNEM_SUFFIX;
-	  else
-	    /* Fall through.  */
-	case BYTE_MNEM_SUFFIX:
-	case QWORD_MNEM_SUFFIX:
-	  i.suffix = mnem_p[-1];
-	  mnem_p[-1] = '\0';
-	  current_templates = (const templates *) hash_find (op_hash,
-                                                             mnemonic);
-	  break;
-	case SHORT_MNEM_SUFFIX:
-	case LONG_MNEM_SUFFIX:
-	  if (!intel_syntax)
+	  /* See if we can get a match by trimming off a suffix.  */
+	  switch (mnem_p[-1])
 	    {
-	      i.suffix = mnem_p[-1];
-	      mnem_p[-1] = '\0';
-	      current_templates = (const templates *) hash_find (op_hash,
-                                                                 mnemonic);
-	    }
-	  break;
-
-	  /* Intel Syntax.  */
-	case 'd':
-	  if (intel_syntax)
-	    {
-	      if (intel_float_operand (mnemonic) == 1)
+	    case WORD_MNEM_SUFFIX:
+	      if (intel_syntax && (intel_float_operand (mnemonic) & 2))
 		i.suffix = SHORT_MNEM_SUFFIX;
 	      else
-		i.suffix = LONG_MNEM_SUFFIX;
+		/* Fall through.  */
+	      case BYTE_MNEM_SUFFIX:
+	      case QWORD_MNEM_SUFFIX:
+		i.suffix = mnem_p[-1];
 	      mnem_p[-1] = '\0';
 	      current_templates = (const templates *) hash_find (op_hash,
-                                                                 mnemonic);
+								 mnemonic);
+	      break;
+	    case SHORT_MNEM_SUFFIX:
+	    case LONG_MNEM_SUFFIX:
+	      if (!intel_syntax)
+		{
+		  i.suffix = mnem_p[-1];
+		  mnem_p[-1] = '\0';
+		  current_templates = (const templates *) hash_find (op_hash,
+								     mnemonic);
+		}
+	      break;
+
+	      /* Intel Syntax.  */
+	    case 'd':
+	      if (intel_syntax)
+		{
+		  if (intel_float_operand (mnemonic) == 1)
+		    i.suffix = SHORT_MNEM_SUFFIX;
+		  else
+		    i.suffix = LONG_MNEM_SUFFIX;
+		  mnem_p[-1] = '\0';
+		  current_templates = (const templates *) hash_find (op_hash,
+								     mnemonic);
+		}
+	      break;
 	    }
-	  break;
 	}
+
       if (!current_templates)
 	{
 	  as_bad (_("no such instruction: `%s'"), token_start);
@@ -11338,7 +11361,7 @@ md_parse_option (int c, const char *arg)
 	{
 	  optimize_for_space = 1;
 	  /* Turn on all encoding optimizations.  */
-	  optimize = -1;
+	  optimize = INT_MAX;
 	}
       else
 	{

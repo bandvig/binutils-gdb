@@ -95,7 +95,7 @@ public:
   void resume (ptid_t, int, enum gdb_signal) override;
   void mourn_inferior () override;
   void update_thread_list () override;
-  const char *pid_to_str (ptid_t) override;
+  std::string pid_to_str (ptid_t) override;
   CORE_ADDR get_thread_local_address (ptid_t ptid,
 				      CORE_ADDR load_module_addr,
 				      CORE_ADDR offset) override;
@@ -1631,20 +1631,17 @@ thread_db_target::update_thread_list ()
   this->beneath ()->update_thread_list ();
 }
 
-const char *
+std::string
 thread_db_target::pid_to_str (ptid_t ptid)
 {
   struct thread_info *thread_info = find_thread_ptid (ptid);
 
   if (thread_info != NULL && thread_info->priv != NULL)
     {
-      static char buf[64];
       thread_db_thread_info *priv = get_thread_db_thread_info (thread_info);
 
-      snprintf (buf, sizeof (buf), "Thread 0x%lx (LWP %ld)",
-		(unsigned long) priv->tid, ptid.lwp ());
-
-      return buf;
+      return string_printf ("Thread 0x%lx (LWP %ld)",
+			    (unsigned long) priv->tid, ptid.lwp ());
     }
 
   return beneath ()->pid_to_str (ptid);
@@ -1979,7 +1976,7 @@ Show whether auto-loading inferior specific libthread_db is enabled."), _("\
 If enabled, libthread_db will be searched in 'set libthread-db-search-path'\n\
 locations to load libthread_db compatible with the inferior.\n\
 Standard system libthread_db still gets loaded even with this option off.\n\
-This options has security implications for untrusted inferiors."),
+This option has security implications for untrusted inferiors."),
 			   NULL, show_auto_load_thread_db,
 			   auto_load_set_cmdlist_get (),
 			   auto_load_show_cmdlist_get ());
