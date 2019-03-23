@@ -277,13 +277,13 @@ tui_show_source_line (struct tui_win_info *win_info, int lineno)
 
   line = win_info->generic.content[lineno - 1];
   if (line->which_element.source.is_exec_point)
-    wattron (win_info->generic.handle, A_STANDOUT);
+    tui_set_reverse_mode (win_info->generic.handle, true);
 
   wmove (win_info->generic.handle, lineno, 1);
   tui_puts (line->which_element.source.line,
 	    win_info->generic.handle);
   if (line->which_element.source.is_exec_point)
-    wattroff (win_info->generic.handle, A_STANDOUT);
+    tui_set_reverse_mode (win_info->generic.handle, false);
 
   /* Clear to end of line but stop before the border.  */
   x = getcurx (win_info->generic.handle);
@@ -399,7 +399,7 @@ tui_set_is_exec_point_at (struct tui_line_or_address l,
       i++;
     }
   if (changed)
-    tui_refresh_win (&win_info->generic);
+    tui_refill_source_window (win_info);
 }
 
 /* Update the execution windows to show the active breakpoints.
