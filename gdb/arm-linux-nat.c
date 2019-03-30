@@ -38,6 +38,7 @@
 #include <sys/procfs.h>
 
 #include "nat/linux-ptrace.h"
+#include "linux-tdep.h"
 
 /* Prototypes for supply_gregset etc.  */
 #include "gregset.h"
@@ -533,7 +534,7 @@ ps_get_thread_area (struct ps_prochandle *ph,
 const struct target_desc *
 arm_linux_nat_target::read_description ()
 {
-  CORE_ADDR arm_hwcap = 0;
+  CORE_ADDR arm_hwcap = linux_get_hwcap (this);
 
   if (have_ptrace_getregset == TRIBOOL_UNKNOWN)
     {
@@ -549,11 +550,6 @@ arm_linux_nat_target::read_description ()
 	have_ptrace_getregset = TRIBOOL_FALSE;
       else
 	have_ptrace_getregset = TRIBOOL_TRUE;
-    }
-
-  if (target_auxv_search (this, AT_HWCAP, &arm_hwcap) != 1)
-    {
-      return this->beneath ()->read_description ();
     }
 
   if (arm_hwcap & HWCAP_IWMMXT)

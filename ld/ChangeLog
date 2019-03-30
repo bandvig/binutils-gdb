@@ -1,3 +1,21 @@
+2019-03-29  Max Filippov  <jcmvbkbc@gmail.com>
+
+	* testsuite/ld-xtensa/relax-undef-weak-pie-export-dynamic.d: New
+	test definition.
+	* testsuite/ld-xtensa/xtensa.exp
+	(relax-undef-weak-pie-export-dynamic): Add new test.
+
+2019-03-26  Martin Liska  <mliska@suse.cz>
+
+	* plugin.c (get_symbols): Add lto_kind_str, lto_resolution_str,
+	lto_visibility_str and use then to inform about plugin-symbols.
+	* testsuite/ld-plugin/plugin-12.d: Adjust expected pattern.
+
+2019-03-25  Tamar Christina  <tamar.christina@arm.com>
+
+	* testsuite/ld-arm/jump-reloc-veneers-cond-long.d: Update disassembly.
+	* testsuite/ld-arm/jump-reloc-veneers-long.d: Update disassembly.
+
 2019-03-21  Sudakshina Das  <sudi.das@arm.com>
 
 	* testsuite/ld-aarch64/aarch64-elf.exp: Add new test.

@@ -1991,6 +1991,7 @@ disassemble_bytes (struct disassemble_info * inf,
 		   disassembling code of course, and when -D is in effect.  */
 		inf->stop_vma = section->vma + stop_offset;
 
+	      inf->stop_offset = stop_offset;
 	      octets = (*disassemble_fn) (section->vma + addr_offset, inf);
 
 	      inf->stop_vma = 0;
@@ -3631,7 +3632,7 @@ dump_relocs_in_section (bfd *abfd,
 			asection *section,
 			void *dummy ATTRIBUTE_UNUSED)
 {
-  arelent **relpp;
+  arelent **relpp = NULL;
   long relcount;
   long relsize;
 
