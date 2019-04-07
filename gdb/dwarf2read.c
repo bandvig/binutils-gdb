@@ -17530,6 +17530,40 @@ dwarf2_init_integer_type (struct dwarf2_cu *cu, struct objfile *objfile,
   return type;
 }
 
+/* Initialise and return a floating point type of size BITS suitable for
+   use as a component of a complex number.  The NAME_HINT is passed through
+   when initialising the floating point type and is the name of the complex
+   type.
+
+   As DWARF doesn't currently provide an explicit name for the components
+   of a complex number, but it can be helpful to have these components
+   named, we try to select a suitable name based on the size of the
+   component.  */
+static struct type *
+dwarf2_init_complex_target_type (struct dwarf2_cu *cu,
+				 struct objfile *objfile,
+				 int bits, const char *name_hint)
+{
+  gdbarch *gdbarch = get_objfile_arch (objfile);
+  struct type *tt = nullptr;
+
+  switch (bits)
+    {
+    case 32:
+      tt = builtin_type (gdbarch)->builtin_float;
+      break;
+    case 64:
+      tt = builtin_type (gdbarch)->builtin_double;
+      break;
+    case 128:
+      tt = builtin_type (gdbarch)->builtin_long_double;
+      break;
+    }
+
+  const char *name = (tt == nullptr) ? nullptr : TYPE_NAME (tt);
+  return dwarf2_init_float_type (objfile, bits, name, name_hint);
+}
+
 /* Find a representation of a given base type and install
    it in the TYPE field of the die.  */
 
@@ -17569,7 +17603,7 @@ read_base_type (struct die_info *die, struct dwarf2_cu *cu)
 	type = init_boolean_type (objfile, bits, 1, name);
 	break;
       case DW_ATE_complex_float:
-	type = dwarf2_init_float_type (objfile, bits / 2, NULL, name);
+	type = dwarf2_init_complex_target_type (cu, objfile, bits / 2, name);
 	type = init_complex_type (objfile, name, type);
 	break;
       case DW_ATE_decimal_float:
@@ -18749,6 +18783,25 @@ partial_die_info::read (const struct die_reader_specs *reader,
 
 	case DW_AT_main_subprogram:
 	  main_subprogram = DW_UNSND (&attr);
+	  break;
+
+	case DW_AT_ranges:
+	  {
+	    /* It would be nice to reuse dwarf2_get_pc_bounds here,
+	       but that requires a full DIE, so instead we just
+	       reimplement it.  */
+	    int need_ranges_base = tag != DW_TAG_compile_unit;
+	    unsigned int ranges_offset = (DW_UNSND (&attr)
+					  + (need_ranges_base
+					     ? cu->ranges_base
+					     : 0));
+
+	    /* Value of the DW_AT_ranges attribute is the offset in the
+	       .debug_ranges section.  */
+	    if (dwarf2_ranges_read (ranges_offset, &lowpc, &highpc, cu,
+				    nullptr))
+	      has_pc_info = 1;
+	  }
 	  break;
 
 	default:
