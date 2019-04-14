@@ -447,16 +447,15 @@ post_create_inferior (struct target_ops *target, int from_tty)
   thread_info *thr = inferior_thread ();
 
   thr->suspend.stop_pc = 0;
-  TRY
+  try
     {
       thr->suspend.stop_pc = regcache_read_pc (get_current_regcache ());
     }
-  CATCH (ex, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &ex)
     {
       if (ex.error != NOT_AVAILABLE_ERROR)
-	throw_exception (ex);
+	throw;
     }
-  END_CATCH
 
   if (exec_bfd)
     {
@@ -605,7 +604,10 @@ run_command_1 (const char *args, int from_tty, enum run_how run_how)
 
   /* Insert temporary breakpoint in main function if requested.  */
   if (run_how == RUN_STOP_AT_MAIN)
-    tbreak_command (main_name (), 0);
+    {
+      std::string arg = string_printf ("-qualified %s", main_name ());
+      tbreak_command (arg.c_str (), 0);
+    }
 
   exec_file = get_exec_file (0);
 
@@ -1646,18 +1648,17 @@ print_return_value (struct ui_out *uiout, struct return_value_info *rv)
       || TYPE_CODE (check_typedef (rv->type)) == TYPE_CODE_VOID)
     return;
 
-  TRY
+  try
     {
       /* print_return_value_1 can throw an exception in some
 	 circumstances.  We need to catch this so that we still
 	 delete the breakpoint.  */
       print_return_value_1 (uiout, rv);
     }
-  CATCH (ex, RETURN_MASK_ALL)
+  catch (const gdb_exception &ex)
     {
       exception_print (gdb_stdout, ex);
     }
-  END_CATCH
 }
 
 /* Data for the FSM that manages the finish command.  */

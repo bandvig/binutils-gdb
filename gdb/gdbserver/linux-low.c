@@ -1531,7 +1531,7 @@ linux_detach_one_lwp (struct lwp_info *lwp)
   /* Preparing to resume may try to write registers, and fail if the
      lwp is zombie.  If that happens, ignore the error.  We'll handle
      it below, when detach fails with ESRCH.  */
-  TRY
+  try
     {
       /* Flush any pending changes to the process's registers.  */
       regcache_invalidate_thread (thread);
@@ -1540,12 +1540,11 @@ linux_detach_one_lwp (struct lwp_info *lwp)
       if (the_low_target.prepare_to_resume != NULL)
 	the_low_target.prepare_to_resume (lwp);
     }
-  CATCH (ex, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &ex)
     {
       if (!check_ptrace_stopped_lwp_gone (lwp))
-	throw_exception (ex);
+	throw;
     }
-  END_CATCH
 
   lwpid = lwpid_of (thread);
   if (ptrace (PTRACE_DETACH, lwpid, (PTRACE_TYPE_ARG3) 0,
@@ -2829,7 +2828,6 @@ linux_wait_for_event (ptid_t ptid, int *wstatp, int options)
 static void
 select_event_lwp (struct lwp_info **orig_lp)
 {
-  int random_selector;
   struct thread_info *event_thread = NULL;
 
   /* In all-stop, give preference to the LWP that is being
@@ -2863,39 +2861,13 @@ select_event_lwp (struct lwp_info **orig_lp)
       /* No single-stepping LWP.  Select one at random, out of those
          which have had events.  */
 
-      /* First see how many events we have.  */
-      int num_events = 0;
-      for_each_thread ([&] (thread_info *thread)
+      event_thread = find_thread_in_random ([&] (thread_info *thread)
 	{
 	  lwp_info *lp = get_thread_lwp (thread);
 
-	  /* Count only resumed LWPs that have an event pending. */
-	  if (thread->last_status.kind == TARGET_WAITKIND_IGNORE
-	      && lp->status_pending_p)
-	    num_events++;
-	});
-      gdb_assert (num_events > 0);
-
-      /* Now randomly pick a LWP out of those that have had
-	 events.  */
-      random_selector = (int)
-	((num_events * (double) rand ()) / (RAND_MAX + 1.0));
-
-      if (debug_threads && num_events > 1)
-	debug_printf ("SEL: Found %d SIGTRAP events, selecting #%d\n",
-		      num_events, random_selector);
-
-      event_thread = find_thread ([&] (thread_info *thread)
-	{
-	  lwp_info *lp = get_thread_lwp (thread);
-
-	  /* Select only resumed LWPs that have an event pending.  */
-	  if (thread->last_status.kind == TARGET_WAITKIND_IGNORE
-	      && lp->status_pending_p)
-	    if (random_selector-- == 0)
-	      return true;
-
-	  return false;
+	  /* Only resumed LWPs that have an event pending. */
+	  return (thread->last_status.kind == TARGET_WAITKIND_IGNORE
+		  && lp->status_pending_p);
 	});
     }
 
@@ -4508,16 +4480,15 @@ static void
 linux_resume_one_lwp (struct lwp_info *lwp,
 		      int step, int signal, siginfo_t *info)
 {
-  TRY
+  try
     {
       linux_resume_one_lwp_throw (lwp, step, signal, info);
     }
-  CATCH (ex, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &ex)
     {
       if (!check_ptrace_stopped_lwp_gone (lwp))
-	throw_exception (ex);
+	throw;
     }
-  END_CATCH
 }
 
 /* This function is called once per thread via for_each_thread.

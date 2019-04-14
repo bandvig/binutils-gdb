@@ -485,6 +485,9 @@ public:
 					     int handle_len,
 					     inferior *inf) override;
 
+  gdb::byte_vector thread_info_to_thread_handle (struct thread_info *tp)
+						 override;
+
   void stop (ptid_t) override;
 
   void interrupt () override;
@@ -764,7 +767,7 @@ public: /* Remote specific methods.  */
 
   char *remote_get_noisy_reply ();
   int remote_query_attached (int pid);
-  inferior *remote_add_inferior (int fake_pid_p, int pid, int attached,
+  inferior *remote_add_inferior (bool fake_pid_p, int pid, int attached,
 				 int try_open_exec);
 
   ptid_t remote_current_thread (ptid_t oldpid);
@@ -1146,12 +1149,12 @@ remote_target::remote_get_noisy_reply ()
 
 	  org_to = to;
 
-	  TRY
+	  try
 	    {
 	      gdbarch_relocate_instruction (target_gdbarch (), &to, from);
 	      relocated = 1;
 	    }
-	  CATCH (ex, RETURN_MASK_ALL)
+	  catch (const gdb_exception &ex)
 	    {
 	      if (ex.error == MEMORY_ERROR)
 		{
@@ -1170,7 +1173,6 @@ remote_target::remote_get_noisy_reply ()
 		}
 	      putpkt ("E01");
 	    }
-	  END_CATCH
 
 	  if (relocated)
 	    {
@@ -2352,7 +2354,7 @@ remote_target::remote_query_attached (int pid)
    if no main executable is open already.  */
 
 inferior *
-remote_target::remote_add_inferior (int fake_pid_p, int pid, int attached,
+remote_target::remote_add_inferior (bool fake_pid_p, int pid, int attached,
 				    int try_open_exec)
 {
   struct inferior *inf;
@@ -2493,7 +2495,7 @@ remote_target::remote_notice_new_inferior (ptid_t currthread, int executing)
       if (find_inferior_pid (currthread.pid ()) == NULL)
 	{
 	  struct remote_state *rs = get_remote_state ();
-	  int fake_pid_p = !remote_multi_process_p (rs);
+	  bool fake_pid_p = !remote_multi_process_p (rs);
 
 	  inf = remote_add_inferior (fake_pid_p,
 				     currthread.pid (), -1, 1);
@@ -4309,7 +4311,7 @@ void
 remote_target::add_current_inferior_and_thread (char *wait_status)
 {
   struct remote_state *rs = get_remote_state ();
-  int fake_pid_p = 0;
+  bool fake_pid_p = false;
 
   inferior_ptid = null_ptid;
 
@@ -4319,7 +4321,7 @@ remote_target::add_current_inferior_and_thread (char *wait_status)
   if (curr_ptid != null_ptid)
     {
       if (!remote_multi_process_p (rs))
-	fake_pid_p = 1;
+	fake_pid_p = true;
     }
   else
     {
@@ -4328,7 +4330,7 @@ remote_target::add_current_inferior_and_thread (char *wait_status)
 	 double duty as both the pid of the target process (if it has
 	 such), and as a flag indicating that a target is active.  */
       curr_ptid = magic_null_ptid;
-      fake_pid_p = 1;
+      fake_pid_p = true;
     }
 
   remote_add_inferior (fake_pid_p, curr_ptid.pid (), -1, 1);
@@ -5602,19 +5604,18 @@ remote_target::open_1 (const char *name, int from_tty, int extended_p)
      function.  See cli-dump.c.  */
   {
 
-    TRY
+    try
       {
 	remote->start_remote (from_tty, extended_p);
       }
-    CATCH (ex, RETURN_MASK_ALL)
+    catch (const gdb_exception &ex)
       {
 	/* Pop the partially set up target - unless something else did
 	   already before throwing the exception.  */
 	if (ex.error != TARGET_CLOSE_ERROR)
 	  remote_unpush_target ();
-	throw_exception (ex);
+	throw;
       }
-    END_CATCH
   }
 
   remote_btrace_reset (rs);
@@ -5846,7 +5847,7 @@ extended_remote_target::attach (const char *args, int from_tty)
 	     target_pid_to_str (ptid_t (pid)).c_str ());
     }
 
-  set_current_inferior (remote_add_inferior (0, pid, 1, 0));
+  set_current_inferior (remote_add_inferior (false, pid, 1, 0));
 
   inferior_ptid = ptid_t (pid);
 
@@ -9766,11 +9767,11 @@ remote_target::remote_kill_k ()
 {
   /* Catch errors so the user can quit from gdb even when we
      aren't on speaking terms with the remote system.  */
-  TRY
+  try
     {
       putpkt ("k");
     }
-  CATCH (ex, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &ex)
     {
       if (ex.error == TARGET_CLOSE_ERROR)
 	{
@@ -9786,9 +9787,8 @@ remote_target::remote_kill_k ()
       /* Otherwise, something went wrong.  We didn't actually kill
 	 the target.  Just propagate the exception, and let the
 	 user or higher layers decide what to do.  */
-      throw_exception (ex);
+      throw;
     }
-  END_CATCH
 }
 
 void
@@ -13135,20 +13135,19 @@ remote_target::get_trace_status (struct trace_status *ts)
 
   putpkt ("qTStatus");
 
-  TRY
+  try
     {
       p = remote_get_noisy_reply ();
     }
-  CATCH (ex, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &ex)
     {
       if (ex.error != TARGET_CLOSE_ERROR)
 	{
 	  exception_fprintf (gdb_stderr, ex, "qTStatus: ");
 	  return -1;
 	}
-      throw_exception (ex);
+      throw;
     }
-  END_CATCH
 
   result = packet_ok (p, &remote_protocol_packets[PACKET_qTStatus]);
 
@@ -13790,16 +13789,15 @@ remote_target::enable_btrace (ptid_t ptid, const struct btrace_config *conf)
 
   /* If we fail to read the configuration, we lose some information, but the
      tracing itself is not impacted.  */
-  TRY
+  try
     {
       btrace_read_config (&tinfo->conf);
     }
-  CATCH (err, RETURN_MASK_ERROR)
+  catch (const gdb_exception_error &err)
     {
       if (err.message != NULL)
-	warning ("%s", err.message);
+	warning ("%s", err.what ());
     }
-  END_CATCH
 
   return tinfo;
 }
@@ -14001,6 +13999,13 @@ remote_target::thread_handle_to_thread_info (const gdb_byte *thread_handle,
     }
 
   return NULL;
+}
+
+gdb::byte_vector
+remote_target::thread_info_to_thread_handle (struct thread_info *tp)
+{
+  remote_thread_info *priv = get_remote_thread_info (tp);
+  return priv->thread_handle;
 }
 
 bool

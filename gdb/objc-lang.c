@@ -408,8 +408,7 @@ extern const struct language_defn objc_language_defn = {
   default_search_name_hash,
   &default_varobj_ops,
   NULL,
-  NULL,
-  LANG_MAGIC
+  NULL
 };
 
 /*
@@ -1297,18 +1296,17 @@ find_objc_msgcall_submethod (int (*f) (CORE_ADDR, CORE_ADDR *),
 			     CORE_ADDR pc, 
 			     CORE_ADDR *new_pc)
 {
-  TRY
+  try
     {
       if (f (pc, new_pc) == 0)
 	return 1;
     }
-  CATCH (ex, RETURN_MASK_ALL)
+  catch (const gdb_exception &ex)
     {
       exception_fprintf (gdb_stderr, ex,
 			 "Unable to determine target of "
 			 "Objective-C method call (ignoring):\n");
     }
-  END_CATCH
 
   return 0;
 }

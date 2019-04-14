@@ -7787,6 +7787,12 @@ need_plt32_p (symbolS *s)
   if (!IS_ELF)
     return FALSE;
 
+#ifdef TE_SOLARIS
+  /* Don't emit PLT32 relocation on Solaris: neither native linker nor
+     krtld support it.  */
+  return FALSE;
+#endif
+
   /* Since there is no need to prepare for PLT branch on x86-64, we
      can generate R_X86_64_PLT32, instead of R_X86_64_PC32, which can
      be used as a marker for 32-bit PC-relative branches.  */
@@ -8144,6 +8150,8 @@ output_insn (void)
 	x86_isa_1_used |= GNU_PROPERTY_X86_ISA_1_AVX512_VBMI2;
       if (i.tm.cpu_flags.bitfield.cpuavx512_vnni)
 	x86_isa_1_used |= GNU_PROPERTY_X86_ISA_1_AVX512_VNNI;
+      if (i.tm.cpu_flags.bitfield.cpuavx512_bf16)
+	x86_isa_1_used |= GNU_PROPERTY_X86_ISA_1_AVX512_BF16;
 
       if (i.tm.cpu_flags.bitfield.cpu8087
 	  || i.tm.cpu_flags.bitfield.cpu287
