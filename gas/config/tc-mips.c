@@ -6014,7 +6014,10 @@ match_non_zero_reg_operand (struct mips_arg_info *arg,
     return FALSE;
 
   if (regno == 0)
-    return FALSE;
+    {
+      set_insn_error (arg->argnum, _("the source register must not be $0"));
+      return FALSE;
+    }
 
   arg->last_regno = regno;
   insn_insert_operand (arg->insn, operand, regno);
@@ -19056,7 +19059,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT asec, fragS *fragp)
       relax_substateT subtype = fragp->fr_subtype;
       bfd_boolean second_longer = (subtype & RELAX_SECOND_LONGER) != 0;
       bfd_boolean use_second = (subtype & RELAX_USE_SECOND) != 0;
-      int first, second;
+      unsigned int first, second;
       fixS *fixp;
 
       first = RELAX_FIRST (subtype);
@@ -19099,7 +19102,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT asec, fragS *fragp)
 	 sequence instead.  */
       while (fixp
 	     && fixp->fx_frag == fragp
-	     && fixp->fx_where < fragp->fr_fix - second)
+	     && fixp->fx_where + second < fragp->fr_fix)
 	{
 	  if (subtype & RELAX_USE_SECOND)
 	    fixp->fx_done = 1;

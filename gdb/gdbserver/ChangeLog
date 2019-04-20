@@ -1,3 +1,52 @@
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* server.c (struct vstop_notif): Derive from notif_event.
+	<base>: Remove.
+	(queue_stop_reply): Update.
+	(remove_all_on_match_ptid): Change type.  Rewrite.
+	(discard_queued_stop_replies): Rewrite.
+	(in_queued_stop_replies_ptid): Change type.
+	(in_queued_stop_replies): Rewrite.
+	(notif_stop): Update.
+	(queue_stop_reply_callback): Update.
+	(captured_main): Don't call initialize_notif.
+	(push_stop_notification): Update.
+	* notif.c (notif_write_event, handle_notif_ack)
+	(notif_event_enque, notif_push): Update.
+	(notif_event_xfree, initialize_notif): Remove.
+	* notif.h (struct notif_event): Include <list>, not
+	"common/queue.h".
+	(struct notif_server) <queue>: Now a std::list.
+	(notif_event_p): Remove typedef.
+	(initialize_notif): Don't declare.
+	(struct notif_event): Add virtual destructor.
+
+2019-04-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* ax.c (ax_vdebug): Call debug_printf.
+	* debug.c (debug_write): New function.
+	* debug.h (debug_write): New declaration.
+	* linux-low.c (sigchld_handler): Call debug_write.
+
+2019-04-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* debug.c (debug_set_output): New function.
+	(debug_vprintf): Send output to debug_file.
+	(debug_flush): Likewise.
+	* debug.h (debug_set_output): New declaration.
+	* server.c (handle_monitor_command): Add debug-file option.
+	(captured_main): Likewise.
+
+2019-04-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* debug.c (remote_debug): Add definition.
+	* debug.h (remote_debug): Add declaration.
+	* hostio.c (remote_debug): Remove declaration.
+	* remote-utils.c (struct ui_file): Likewise.
+	(remote_debug): Likewise.
+	* remote-utils.h (remote_debug): Likewise,
+	* server.c (remote_debug): Remove definition.
+
 2019-04-10  Kevin Buettner  <kevinb@redhat.com>
 
 	* linux-x86-low.c (x86_fill_gregset): Sign extend EAX value

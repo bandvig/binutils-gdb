@@ -1,3 +1,134 @@
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* common/queue.h: Remove.
+
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* event-loop.c: Don't include "common/queue.h".
+
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* remote.c (remote_target): Use delete.
+	* remote-notif.h: Include <list>, not "common/queue.h".
+	(notif_client_p): Remove typedef.
+	(remote_notif_state): Add constructor, destructor, initializer.
+	<notif_queue>: Now a std::list.
+	(remote_notif_state_xfree): Don't declare.
+	* remote-notif.c (remote_notif_process, handle_notification)
+	(remote_notif_state_allocate): Update.
+	(~remote_notif_state): Rename from remote_notif_state_xfree.
+
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* symfile.c (reread_symbols): Update.
+	* objfiles.c (objfile_register_static_link)
+	(objfile_lookup_static_link): Update
+	(~objfile) Don't delete static_links.
+	* objfiles.h (struct objfile) <static_links>: Now an htab_up.
+
+2019-04-19  Tom Tromey  <tom@tromey.com>
+
+	* type-stack.h (struct type_stack) <insert>: Constify string.
+	* type-stack.c (type_stack::insert): Constify string.
+	* gdbtypes.h (lookup_template_type): Update.
+	(address_space_name_to_int): Update.
+	* gdbtypes.c (address_space_name_to_int): Make space_identifier
+	const.
+	(lookup_template_type): Make name const.
+	* c-exp.y: Update rules.
+	(lex_one_token, classify_name, classify_inner_name)
+	(c_print_token): Update.
+	* p-exp.y: Update rules.
+	(yylex): Update.
+	* f-exp.y: Update rules.
+	(yylex): Update.
+	* d-exp.y: Update rules.
+	(lex_one_token, classify_name, classify_inner_name): Update.
+	* parse.c (write_dollar_variable, copy_name): Return std::string.
+	* parser-defs.h (copy_name): Change return type.
+	* m2-exp.y: Update rules.
+	(yylex): Update.
+	* go-exp.y (lex_one_token): Update.
+	Update rules.
+	(classify_unsafe_function, classify_packaged_name)
+	(classify_name, yylex): Update.
+
+2019-04-19  Sergei Trofimovich <siarheit@google.com>
+
+	* configure.ac: add --enable-source-highlight switch.
+	* configure: Regenerate.
+	* top.c (print_gdb_version): plumb --enable-source-highlight
+	status to "show configuration".
+
+2019-04-19  Tom Tromey  <tromey@adacore.com>
+
+	* ada-lang.c (ada_is_variant_part, ada_to_fixed_type_1):
+	Check ADA_TYPE_P.
+	(empty_record, ada_template_to_fixed_record_type_1)
+	(template_to_static_fixed_type)
+	(to_record_with_fixed_variant_part): Use INIT_NONE_SPECIFIC.
+	* cp-abi.c (value_rtti_type): Check HAVE_CPLUS_STRUCT.
+	* gdbtypes.h (INIT_NONE_SPECIFIC, ADA_TYPE_P): New
+	macros.
+
+2019-04-19  Ilya Yu. Malakhov  <malakhov@mcst.ru>
+
+	PR symtab/24423:
+	* source.c (print_source_lines_base): Advance "iter" when a
+	control character is seen.
+
+2019-04-19  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* cli/cli-cmds.c (_initialize_cli_cmds): Move "shell" "!" alias
+	close to the add_com "shell".
+
+2019-04-18  Tom Tromey  <tromey@adacore.com>
+
+	* process-stratum-target.h (class process_stratum_target)
+	<stratum>: Add "final".
+
+2019-04-17  Tom Tromey  <tromey@adacore.com>
+
+	* dwarf2read.c (dwarf2_init_complex_target_type): Check "tt"
+	against nullptr before use.
+
+2019-04-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* nat/linux-waitpid.c (linux_debug): Call debug_vprintf.
+
+2019-04-17  Jim Wilson  <jimw@sifive.com>
+	    Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* riscv-tdep.c (riscv_breakpoint_kind_from_pc): Hanndle case where
+	code read might fail, assume 4-byte breakpoint in that case.
+
+2019-04-15  Leszek Swirski  <leszeks@google.com>
+
+	* amd64-tdep.c (amd64_classify_aggregate): Use cp_pass_by_reference
+	rather than a hand-rolled POD check when checking for forced MEMORY
+	classification.
+
+2019-04-15  Alan Hayward  <alan.hayward@arm.com>
+
+	* aarch64-linux-nat.c (store_sveregs_to_thread): Set vector length.
+	* nat/aarch64-sve-linux-ptrace.c (aarch64_sve_set_vq): New
+	function.
+	(aarch64_sve_regs_copy_to_reg_buf): Remove VG checks.
+	(aarch64_sve_regs_copy_from_reg_buf): Likewise.
+	* nat/aarch64-sve-linux-ptrace.h (aarch64_sve_set_vq): New
+	declaration.
+
+2019-04-15  Alan Hayward  <alan.hayward@arm.com>
+
+	* aarch64-linux-nat.c
+	(aarch64_linux_nat_target::thread_architecture): Add override.
+	* aarch64-tdep.c (aarch64_gdbarch_init): Ensure different tdesc for
+	each VQ.
+
+2019-04-15  Alan Hayward  <alan.hayward@arm.com>
+
+	* aarch64-tdep.c (aarch64_gdbarch_init): Move gdbarch lookup.
+
 2019-04-13  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	* dwarf2read.c (dwarf2_init_complex_target_type): Handle complex
