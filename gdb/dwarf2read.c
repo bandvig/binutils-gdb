@@ -1531,6 +1531,9 @@ static int read_1_signed_byte (bfd *, const gdb_byte *);
 
 static unsigned int read_2_bytes (bfd *, const gdb_byte *);
 
+/* Read the next three bytes (little-endian order) as an unsigned integer.  */
+static unsigned int read_3_bytes (bfd *, const gdb_byte *);
+
 static unsigned int read_4_bytes (bfd *, const gdb_byte *);
 
 static ULONGEST read_8_bytes (bfd *, const gdb_byte *);
@@ -16212,13 +16215,34 @@ process_structure_scope (struct die_info *die, struct dwarf2_cu *cu)
 
       if (has_template_parameters)
 	{
-	  /* Make sure that the symtab is set on the new symbols.
-	     Even though they don't appear in this symtab directly,
-	     other parts of gdb assume that symbols do, and this is
-	     reasonably true.  */
-	  for (int i = 0; i < TYPE_N_TEMPLATE_ARGUMENTS (type); ++i)
-	    symbol_set_symtab (TYPE_TEMPLATE_ARGUMENT (type, i),
-			       symbol_symtab (sym));
+	  struct symtab *symtab;
+	  if (sym != nullptr)
+	    symtab = symbol_symtab (sym);
+	  else if (cu->line_header != nullptr)
+	    {
+	      /* Any related symtab will do.  */
+	      symtab
+		= cu->line_header->file_name_at (file_name_index (1))->symtab;
+	    }
+	  else
+	    {
+	      symtab = nullptr;
+	      complaint (_("could not find suitable "
+			   "symtab for template parameter"
+			   " - DIE at %s [in module %s]"),
+			 sect_offset_str (die->sect_off),
+			 objfile_name (objfile));
+	    }
+
+	  if (symtab != nullptr)
+	    {
+	      /* Make sure that the symtab is set on the new symbols.
+		 Even though they don't appear in this symtab directly,
+		 other parts of gdb assume that symbols do, and this is
+		 reasonably true.  */
+	      for (int i = 0; i < TYPE_N_TEMPLATE_ARGUMENTS (type); ++i)
+		symbol_set_symtab (TYPE_TEMPLATE_ARGUMENT (type, i), symtab);
+	    }
 	}
     }
 }
@@ -17545,17 +17569,37 @@ dwarf2_init_complex_target_type (struct dwarf2_cu *cu,
   /* Try to find a suitable floating point builtin type of size BITS.
      We're going to use the name of this type as the name for the complex
      target type that we are about to create.  */
-  switch (bits)
+  switch (cu->language)
     {
-    case 32:
-      tt = builtin_type (gdbarch)->builtin_float;
+    case language_fortran:
+      switch (bits)
+	{
+	case 32:
+	  tt = builtin_f_type (gdbarch)->builtin_real;
+	  break;
+	case 64:
+	  tt = builtin_f_type (gdbarch)->builtin_real_s8;
+	  break;
+	case 96:	/* The x86-32 ABI specifies 96-bit long double.  */
+	case 128:
+	  tt = builtin_f_type (gdbarch)->builtin_real_s16;
+	  break;
+	}
       break;
-    case 64:
-      tt = builtin_type (gdbarch)->builtin_double;
-      break;
-    case 96:	/* The x86-32 ABI specifies 96-bit long double.  */
-    case 128:
-      tt = builtin_type (gdbarch)->builtin_long_double;
+    default:
+      switch (bits)
+	{
+	case 32:
+	  tt = builtin_type (gdbarch)->builtin_float;
+	  break;
+	case 64:
+	  tt = builtin_type (gdbarch)->builtin_double;
+	  break;
+	case 96:	/* The x86-32 ABI specifies 96-bit long double.  */
+	case 128:
+	  tt = builtin_type (gdbarch)->builtin_long_double;
+	  break;
+	}
       break;
     }
 
@@ -19289,6 +19333,10 @@ read_attribute_value (const struct die_reader_specs *reader,
       info_ptr += bytes_read;
       break;
     case DW_FORM_strx:
+    case DW_FORM_strx1:
+    case DW_FORM_strx2:
+    case DW_FORM_strx3:
+    case DW_FORM_strx4:
     case DW_FORM_GNU_str_index:
       if (reader->dwo_file == NULL)
 	{
@@ -19299,12 +19347,34 @@ read_attribute_value (const struct die_reader_specs *reader,
 		 bfd_get_filename (abfd));
 	}
       {
-	ULONGEST str_index =
-	  read_unsigned_leb128 (abfd, info_ptr, &bytes_read);
-
+	ULONGEST str_index;
+	if (form == DW_FORM_strx1)
+	  {
+	    str_index = read_1_byte (abfd, info_ptr);
+	    info_ptr += 1;
+	  }
+	else if (form == DW_FORM_strx2)
+	  {
+	    str_index = read_2_bytes (abfd, info_ptr);
+	    info_ptr += 2;
+	  }
+	else if (form == DW_FORM_strx3)
+	  {
+	    str_index = read_3_bytes (abfd, info_ptr);
+	    info_ptr += 3;
+	  }
+	else if (form == DW_FORM_strx4)
+	  {
+	    str_index = read_4_bytes (abfd, info_ptr);
+	    info_ptr += 4;
+	  }
+	else
+	  {
+	    str_index = read_unsigned_leb128 (abfd, info_ptr, &bytes_read);
+	    info_ptr += bytes_read;
+	  }
 	DW_STRING (attr) = read_str_index (reader, str_index);
 	DW_STRING_IS_CANONICAL (attr) = 0;
-	info_ptr += bytes_read;
       }
       break;
     default:
@@ -19372,6 +19442,19 @@ static int
 read_2_signed_bytes (bfd *abfd, const gdb_byte *buf)
 {
   return bfd_get_signed_16 (abfd, buf);
+}
+
+static unsigned int
+read_3_bytes (bfd *abfd, const gdb_byte *buf)
+{
+  unsigned int result = 0;
+  for (int i = 0; i < 3; ++i)
+    {
+      unsigned char byte = bfd_get_8 (abfd, buf);
+      buf++;
+      result |= ((unsigned int) byte << (i * 8));
+    }
+  return result;
 }
 
 static unsigned int
