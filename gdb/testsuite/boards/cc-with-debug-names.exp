@@ -1,4 +1,4 @@
-# Copyright 2012-2019 Free Software Foundation, Inc.
+# Copyright 2019 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,12 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # This file is a dejagnu "board file" and is used to run the testsuite
-# with dwarf4 debug information and gdb-generated .gdb_index.
+# with contrib/cc-with-tweaks.sh -n.
 #
 # Example usage:
-# bash$ make check RUNTESTFLAGS='--target_board=dwarf4-gdb-index'
+# bash$ cd $objdir
+# bash$ make check-gdb \
+#   RUNTESTFLAGS='--target_board=cc-with-debug-names'
+#
 
-set CC_WITH_TWEAKS_FLAGS "-i"
+set CC_WITH_TWEAKS_FLAGS "-n"
 load_board_description "cc-with-tweaks"
-
-set_board_info debug_flags "-gdwarf-4 -fdebug-types-section"

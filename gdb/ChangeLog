@@ -1,3 +1,150 @@
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* aarch64-tdep.c (stack_item_t): Remove typedef and DEF_VEC.
+	(struct aarch64_call_info): Add initializers.
+	<si>: Now a std::vector.
+	(pass_on_stack, aarch64_push_dummy_call): Update.
+
+2019-05-04  Simon Marchi  <simon.marchi@efficios.com>
+	    Tom Tromey  <tom@tromey.com>
+
+	* ppc-linux-nat.c (thread_points_p): Remove typedef and DEF_VEC.
+	(ppc_threads): Now a std::vector.  Now static.
+	(hwdebug_find_thread_points_by_tid)
+	(ppc_linux_nat_target::low_new_thread, ppc_linux_thread_exit):
+	Update.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* arc-tdep.c (arc_tdesc_init): Return bool.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* arm-linux-nat.c (arm_linux_nat_target::can_use_hw_breakpoint):
+	Use gdb_assert_not_reached.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* compile/compile-cplus-types.c (compile_cplus_convert_enum): Use
+	"false".
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* arc-tdep.c (arc_tdesc_init): Use bool.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* stack.c (select_frame_for_mi): Use "false", not "FALSE".
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* cli/cli-cmds.c (valid_command_p): Return bool.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* cli/cli-decode.c (valid_user_defined_cmd_name_p): Return bool.
+	* command.h (valid_user_defined_cmd_name_p): Channge return type.
+
+2019-05-04  Raul Tambre  <raul@tambre.ee>
+
+	* python/lib/gdb/prompt.py (_ExtendedPrompt)
+	<before_prompt_hook, get_show_string>: Fix incorrect use of 'is'
+	operator for comparison.
+
+2019-05-04  Tom Tromey  <tom@tromey.com>
+
+	* psymtab.c (psymbol_name_matches, match_partial_symbol)
+	(lookup_partial_symbol, print_partial_symbols)
+	(recursively_search_psymtabs, sort_pst_symbols, psymbol_hash)
+	(psymbol_compare): Update.
+	(add_psymbol_to_bcache): Clear the entire psymbol.
+	(maintenance_check_psymtabs): Update.
+	* psympriv.h (struct partial_symbol): Don't derive from
+	general_symbol_info.
+	<obj_section, unrelocated_address, address,
+	set_unrelocated_address>: Update.
+	<ginfo>: New member.
+	* dwarf-index-write.c (write_psymbols, debug_names::insert)
+	(debug_names::write_psymbols): Update.
+
+2019-05-04  Tom de Vries  <tdevries@suse.de>
+
+	* contrib/cc-with-tweaks.sh: Support -n arg.
+
+2019-05-04  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* corelow.c (core_target::detach): Ensure frame cache and
+	register caches are cleared.
+	inferior.c (exit_inferior_1): Likewise.
+
+2019-05-03  Sandra Loosemore  <sandra@codesourcery.com>
+	    Tom Tromey  <tom@tromey.com>
+
+	* dictionary.c (collate_pending_symbols_by_language): Remove
+	"struct" from foreach.
+	* symtab.c (lookup_global_symbol_from_objfile)
+	(lookup_symbol_in_objfile_from_linkage_name): Remove "struct" from
+	foreach.
+	* ser-tcp.c (net_open): Remove "struct" from foreach.
+	* objfiles.c (objfile_relocate, objfile_rebase)
+	(objfile_has_symbols): Remove "struct" from foreach.
+	* minsyms.c (lookup_minimal_symbol_by_pc_section): Remove "struct"
+	from foreach.
+	* dwarf2read.c (handle_struct_member_die): Remove "struct" from
+	foreach.
+	* darwin-nat.c (thread_info_from_private_thread_info): Remove
+	"struct" from foreach.
+	* ada-lang.c (create_excep_cond_exprs)
+	(ada_exception_catchpoint_cond_string): Remove "struct" from
+	foreach.
+
+2019-05-03  Tom Tromey  <tromey@adacore.com>
+
+	* ada-exp.y (convert_char_literal): Check suffix of each
+	enumerator.
+
+2019-05-03  Dilyan Palauzov  <dilyan.palauzov@aegee.org>
+
+	PR ada/21406:
+	* ada-exp.y (yywrap): Don't define.
+	* ada-lex.l (%option): Add noyywrap
+	(yywrap): Remove.
+
+2019-05-03  Eli Zaretskii  <eliz@gnu.org>
+
+	* common/common-defs.h [__MINGW32__ || __CYGWIN__]: Define
+	_WIN32_WINNT to the XP level, unless already defined to a higher
+	level.
+
+	* unittests/parse-connection-spec-selftests.c:
+	* ser-tcp.c:
+	* common/netstuff.c [USE_WIN32API]:  Remove the _WIN32_WINNT
+	override.
+
+	* symfile.c (find_separate_debug_file): Remove colon from the
+	drive spec of DOS/Windows file names of the target, so that the
+	file name produced from DEBUGDIR and the target's directory will
+	be valid on DOS/Windows systems.
+
+2019-05-02  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* rust-lang.c (val_print_struct): Handle printing structures
+	containing strings.
+
+2019-05-02  Tom Tromey  <tromey@adacore.com>
+
+	* valarith.c (_initialize_valarith): Remove.
+
+2019-05-01  Tom Tromey  <tromey@adacore.com>
+
+	* ada-lang.c (ada_value_primitive_field): Treat more fields as
+	bitfields.
+
+2019-05-01  Tom Tromey  <tromey@adacore.com>
+
+	* ada-lang.c (ada_value_assign): Correctly compute starting offset
+	for big-endian copies.
+
 2019-04-30  Ali Tamur  <tamur@google.com>
 	* gdb/dwarf2read.c (read_3_bytes): New declaration.
 	(read_attribute_value): Added DW_FORM_strx1-4 cases.
