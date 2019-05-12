@@ -1,3 +1,160 @@
+2019-05-10  Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	* config/tc-mips.c (macro) <M_ADD_I, M_SUB_I, M_DADD_I, M_DSUB_I>:
+	Add expansions for MIPS r6.
+	* testsuite/gas/mips/add.s: Enable tests for R6.
+	* testsuite/gas/mips/daddi.s: Annotate to test DADD for R6.
+	* testsuite/gas/mips/mipsr6@add.d: Likewise.
+	* gas/testsuite/gas/mips/mipsr6@dadd.d: New test.
+	* gas/testsuite/gas/mips/mips.exp: Run the new test.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* testsuite/gas/aarch64/sve2.d: Remove file format restriction.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* testsuite/gas/aarch64/illegal-sve2-aes.d: New test.
+	* testsuite/gas/aarch64/illegal-sve2-bitperm.d: New test.
+	* testsuite/gas/aarch64/illegal-sve2-sha3.d: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2-sm4.d: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2-sve1ext.d: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2-sve1ext.l: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2.d: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2.l: Test new instructions.
+	* testsuite/gas/aarch64/illegal-sve2.s: Test new instructions.
+	* testsuite/gas/aarch64/sve1-extended-sve2.s: New test.
+	* testsuite/gas/aarch64/sve2.d: Test new instructions.
+	* testsuite/gas/aarch64/sve2.s: Test new instructions.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (parse_operands): Handle new SVE_SHLIMM_UNPRED_22
+	operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (parse_operands): Handle new SVE_Zm4_11_INDEX
+	operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (parse_operands): Handle new SVE_SHRIMM_UNPRED_22
+	operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (REG_ZR): Macro specifying zero register.
+	(parse_address_main): Account for new addressing mode [Zn.S, Xm].
+	(parse_operands): Handle new SVE_ADDR_ZX operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (parse_operands): Handle new SVE_Zm3_11_INDEX
+	operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c (parse_operands): Handle new SVE_IMM_ROT3 operand.
+
+2019-05-09  Matthew Malcomson  <matthew.malcomson@arm.com>
+
+	* config/tc-aarch64.c: Add command line architecture feature flags
+	"sve2", "sve2-sm4", "sve2-aes", "sve2-sha3", "bitperm".
+	* doc/c-aarch64.texi: Document new architecture feature flags.
+
+2019-05-08  Alan Modra  <amodra@gmail.com>
+
+	* testsuite/gas/elf/dwarf2-1.s,
+	* testsuite/gas/elf/dwarf2-2.s,
+	* testsuite/gas/elf/dwarf2-5.s,
+	* testsuite/gas/elf/dwarf2-7.s,
+	* testsuite/gas/elf/dwarf2-8.s,
+	* testsuite/gas/elf/dwarf2-9.s,
+	* testsuite/gas/elf/dwarf2-10.s,
+	* testsuite/gas/elf/dwarf2-11.s,
+	* testsuite/gas/elf/dwarf2-12.s,
+	* testsuite/gas/elf/dwarf2-13.s,
+	* testsuite/gas/elf/dwarf2-14.s,
+	* testsuite/gas/elf/dwarf2-15.s,
+	* testsuite/gas/elf/dwarf2-16.s,
+	* testsuite/gas/elf/dwarf2-17.s,
+	* testsuite/gas/elf/dwarf2-18.s,
+	* testsuite/gas/elf/dwarf2-19.s: Double size of align and simulated
+	instructions.
+	* testsuite/gas/elf/dwarf2-1.d,
+	* testsuite/gas/elf/dwarf2-2.d,
+	* testsuite/gas/elf/dwarf2-5.d,
+	* testsuite/gas/elf/dwarf2-7.d,
+	* testsuite/gas/elf/dwarf2-8.d,
+	* testsuite/gas/elf/dwarf2-9.d,
+	* testsuite/gas/elf/dwarf2-10.d,
+	* testsuite/gas/elf/dwarf2-11.d,
+	* testsuite/gas/elf/dwarf2-12.d,
+	* testsuite/gas/elf/dwarf2-13.d,
+	* testsuite/gas/elf/dwarf2-14.d,
+	* testsuite/gas/elf/dwarf2-15.d,
+	* testsuite/gas/elf/dwarf2-16.d,
+	* testsuite/gas/elf/dwarf2-17.d,
+	* testsuite/gas/elf/dwarf2-18.d,
+	* testsuite/gas/elf/dwarf2-19.d: Use xfail rather than notarget.
+	Remove avr, pru, tile, xtensa from xfails.  Update expected output.
+	* testsuite/gas/elf/elf.exp: Sort targets.
+	(dump_opts): Pass {as -mno-relax} for riscv, {as -mno-link-relax}
+	for avr and pru, and {as --no-link-relax} for xtensa to dwarf tests.
+	* testsuite/gas/elf/section2.e-miwmmxt: Delete unused file.
+
+2019-05-08  Alan Modra  <amodra@gmail.com>
+
+	* config/tc-xtensa.c (opt_linkrelax): New variable.
+	(md_parse_option): Set it here.
+	(md_begin): Copy opt_linkrelax to linkrelax.
+
+2019-05-07  Alexandre Oliva <aoliva@redhat.com>
+
+	* testsuite/gas/elf/dwarf2-18.d: Xfail mep-*.
+	* testsuite/gas/elf/dwarf2-19.d: Likewise.
+
+2019-05-07  Alan Modra  <amodra@gmail.com>
+
+	* symbols.c (use_complex_relocs_for): Formatting.  Factor out
+	X_add_symbol tests.
+
+2019-05-06  Andrew Bennett  <andrew.bennett@imgtec.com>
+	    Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	* config/tc-mips.c (mips_set_ase): Handle ASE_EVA_R6.
+	(macro) <M_LLWPE_AB, M_SCWPE_AB>: New cases.
+	(mips_after_parse_args): Translate EVA to EVA_R6.
+	* testsuite/gas/mips/ase-errors-1.s: Add new instructions.
+	* testsuite/gas/mips/eva.s: Likewise.
+	* testsuite/gas/mips/ase-errors-1.l: Check errors for
+	 new instructions.
+	* testsuite/gas/mips/mipsr6@eva.d: Check new test cases.
+
+2019-05-06  Alan Modra  <amodra@gmail.com>
+
+	* symbols.c (symbol_relc_make_sym): Do not access sym->sy_value
+	directly.
+
+2019-05-06  Alan Modra  <amodra@gmail.com>
+
+	* config/tc-ppc.c (ppc_fix_adjustable): Exclude all GOT and PLT
+	relocs, and VLE sdarel relocs.
+	* testsuite/gas/ppc/power4.d: Adjust.
+
+2019-05-05  Alexandre Oliva <aoliva@redhat.com>
+
+	* dwarf2dbg.c (set_or_check_view): Skip heads when assigning
+	views of prior locs.
+	(dwarf2_gen_line_info_1): Skip heads.
+	(size_inc_line_addr, emit_inc_line_addr): Drop
+	DW_LNS_advance_pc for zero addr delta.
+	(dwarf2_finish): Assign views for heads of segments.
+	* testsuite/gas/elf/dwarf2-19.d: New.
+	* testsuite/gas/elf/dwarf2-19.s: New.
+	* testsuite/gas/elf/elf.exp: Test it.
+
 2019-05-04  Alan Modra  <amodra@gmail.com>
 
 	* config/tc-m32c.c (insn_size): Delete static var.

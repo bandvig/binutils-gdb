@@ -1,3 +1,18 @@
+2019-05-09  Dimitar Dimitrov  <dimitar@dinux.eu>
+
+	* scripttempl/pru.sc (__init_array_begin, __init_array_begin):
+	Rename.
+
+2019-05-08  Pekka Seppänen  <pexu@sourceware.mail.kapsi.fi>
+
+	PR 24536
+	* ldbuildid.c (generate_build_id): Cast return value from
+	GetProcAddress in order to avoid a compile time warning.
+
+2019-05-06  Alan Modra  <amodra@gmail.com>
+
+	* testsuite/ld-undefined/weak-undef.exp: Don't xfail pj.
+
 2019-05-04  Alan Modra  <amodra@gmail.com>
 
 	* testsuite/ld-scripts/fill.d: Don't xfail m32c
