@@ -1,3 +1,123 @@
+2019-05-18  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	PR gdb/18644
+	* gdb.fortran/complex.exp: Remove setup_kfail calls.
+	* gdb.fortran/printing-types.exp: Add new test.
+	* gdb.fortran/printing-types.f90: Add 16-byte real variable for
+	testing.
+	* gdb.fortran/type-kinds.exp (test_cast_1_to_type_kind): Remove
+	setup_kfail call.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* README (Running the Testsuite): Change example.
+	(Testsuite Parameters): Remove TRANSCRIPT.
+	* lib/gdb.exp: Remove TRANSCRIPT check.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* README (Testsuite Parameters): Add replay logging to
+	GDBSERVER_DEBUG.
+	(gdbserver,debug): Refer to GDBSERVER_DEBUG.
+	* lib/gdbserver-support.exp (gdbserver_start): Treat gdbserverdebug
+	as a comma separated list.
+	(gdb_debug_init): Override procedure.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* lib/gdb.exp (default_gdb_spawn): Call gdb_write_cmd_file.
+	(gdb_write_cmd_file): New procedure.
+	* lib/gdbserver-support.exp (gdbserver_start): Call
+	gdbserver_write_cmd_file.
+	(gdbserver_write_cmd_file): New procedure.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* lib/gdb.exp (gdb_unload): Mark Y as an answer.
+	(delete_breakpoints): Likewise.
+	(gdb_run_cmd): Likewise.
+	(gdb_start_cmd): Likewise.
+	(gdb_starti_cmd): Likewise.
+	(gdb_internal_error_resync): Likewise.
+	(gdb_test_multiple): Likewise.
+	(gdb_reinitialize_dir): Likewise.
+	(default_gdb_exit): Likewise.
+	(gdb_file_cmd): Mark kill as optional.
+	(default_gdb_start): Call gdb_stdin_log_init.
+	(send_gdb): Call gdb_stdin_log_write.
+	(rerun_to_main): Mark Y as an answer.
+	(gdb_stdin_log_init): New function.
+	(gdb_stdin_log_write): Likewise.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* gdb.base/breakpoint-in-ro-region.exp: Disable when debugging.
+	* gdb.base/debug-expr.exp: Likewise.
+	* gdb.base/foll-fork.exp: Likewise.
+	* gdb.base/foll-vfork.exp: Likewise.
+	* gdb.base/fork-print-inferior-events.exp: Likewise.
+	* gdb.base/gdb-sigterm.exp: Likewise.
+	* gdb.base/gdbinit-history.exp: Likewise.
+	* gdb.base/osabi.exp: Likewise.
+	* gdb.base/sss-bp-on-user-bp-2.exp: Likewise.
+	* gdb.base/ui-redirect.exp: Likewise.
+	* gdb.gdb/unittest.exp: Likewise.
+	* gdb.mi/mi-break.exp: Disable separate-mi-tty when debugging.
+	* gdb.mi/mi-watch.exp: Likewise.
+	* gdb.mi/new-ui-mi-sync.exp: Likewise.
+	* gdb.mi/user-selected-context-sync.exp: Likewise.
+	* gdb.python/python.exp: Disable debug test when debugging.
+	* gdb.threads/check-libthread-db.exp: Disable when debugging.
+	* gdb.threads/signal-while-stepping-over-bp-other-thread.exp:
+	Likewise.
+	* gdb.threads/stepi-random-signal.exp: Likewise.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* Makefile.in: Pass through GDB_DEBUG.
+	* README (Testsuite Parameters): Add GDB_DEBUG.
+	(gdb,debug): Add board setting.
+	* lib/gdb.exp (default_gdb_start): Start debugging.
+	(gdb_debug_enabled): New procedure.
+	(gdb_debug_init): Likewise.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+	
+	* Makefile.in: Pass through GDB_DEBUG.
+	* README (Testsuite Parameters): Add GDB_DEBUG.
+	(gdb,debug): Add board setting.
+	* lib/gdb.exp (default_gdb_start): Start debugging.
+	(gdb_debug_enabled): New procedure.
+	(gdb_debug_init): Likewise.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* gdb.base/ui-redirect.exp: Add debug redirect tests.
+
+2019-05-17  Alan Hayward  <alan.hayward@arm.com>
+
+	* gdb.base/ui-redirect.exp: Test redirection.
+
+2019-01-28  Jan Vrany  <jan.vrany@fit.cvut.cz>
+
+	* gdb.mi/mi-complete.exp: New file.
+	* gdb.mi/mi-complete.cc: Likewise.
+
+2019-05-15  Bernhard Heckel  <bernhard.heckel@intel.com>
+
+	* gdb.fortran/vla-sizeof.exp: Add tests of sizeof applied to
+	indexed and sliced arrays, and pointers to arrays.
+
+2019-05-14  Tom Tromey  <tromey@adacore.com>
+
+	* gdb.base/info-shared.exp (check_info_shared): Add "info shared"
+	styling test.
+
+2019-05-14  Tom de Vries  <tdevries@suse.de>
+
+	* gdb.dwarf2/dw2-skip-prologue.S (.debug_loc): Fix base address
+	selection entry encoding.
+
 2019-05-10  Tom Tromey  <tromey@adacore.com>
 
 	* gdb.ada/info_exc.exp: Add "complete" test.

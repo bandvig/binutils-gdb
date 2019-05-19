@@ -1507,8 +1507,25 @@ static unsigned int peek_abbrev_code (bfd *, const gdb_byte *);
 static struct partial_die_info *load_partial_dies
   (const struct die_reader_specs *, const gdb_byte *, int);
 
-static struct partial_die_info *find_partial_die (sect_offset, int,
-						  struct dwarf2_cu *);
+/* A pair of partial_die_info and compilation unit.  */
+struct cu_partial_die_info
+{
+  /* The compilation unit of the partial_die_info.  */
+  struct dwarf2_cu *cu;
+  /* A partial_die_info.  */
+  struct partial_die_info *pdi;
+
+  cu_partial_die_info (struct dwarf2_cu *cu, struct partial_die_info *pdi)
+    : cu (cu),
+      pdi (pdi)
+  { /* Nothhing.  */ }
+
+private:
+  cu_partial_die_info () = delete;
+};
+
+static const struct cu_partial_die_info find_partial_die (sect_offset, int,
+							  struct dwarf2_cu *);
 
 static const gdb_byte *read_attribute (const struct die_reader_specs *,
 				       struct attribute *, struct attr_abbrev *,
@@ -8760,8 +8777,12 @@ partial_die_parent_scope (struct partial_die_info *pdi,
 
   real_pdi = pdi;
   while (real_pdi->has_specification)
-    real_pdi = find_partial_die (real_pdi->spec_offset,
-				 real_pdi->spec_is_dwz, cu);
+    {
+      auto res = find_partial_die (real_pdi->spec_offset,
+				   real_pdi->spec_is_dwz, cu);
+      real_pdi = res.pdi;
+      cu = res.cu;
+    }
 
   parent = real_pdi->die_parent;
   if (parent == NULL)
@@ -18905,7 +18926,7 @@ dwarf2_cu::find_partial_die (sect_offset sect_off)
    outside their CU (they do however referencing other types via
    DW_FORM_ref_sig8).  */
 
-static struct partial_die_info *
+static const struct cu_partial_die_info
 find_partial_die (sect_offset sect_off, int offset_in_dwz, struct dwarf2_cu *cu)
 {
   struct dwarf2_per_objfile *dwarf2_per_objfile
@@ -18919,7 +18940,7 @@ find_partial_die (sect_offset sect_off, int offset_in_dwz, struct dwarf2_cu *cu)
     {
       pd = cu->find_partial_die (sect_off);
       if (pd != NULL)
-	return pd;
+	return { cu, pd };
       /* We missed recording what we needed.
 	 Load all dies and try again.  */
       per_cu = cu->per_cu;
@@ -18967,7 +18988,7 @@ find_partial_die (sect_offset sect_off, int offset_in_dwz, struct dwarf2_cu *cu)
 		    _("could not find partial DIE %s "
 		      "in cache [from module %s]\n"),
 		    sect_offset_str (sect_off), bfd_get_filename (objfile->obfd));
-  return pd;
+  return { per_cu->cu, pd };
 }
 
 /* See if we can figure out if the class lives in a namespace.  We do
@@ -18993,8 +19014,12 @@ guess_partial_die_structure_name (struct partial_die_info *struct_pdi,
 
   real_pdi = struct_pdi;
   while (real_pdi->has_specification)
-    real_pdi = find_partial_die (real_pdi->spec_offset,
-				 real_pdi->spec_is_dwz, cu);
+    {
+      auto res = find_partial_die (real_pdi->spec_offset,
+				   real_pdi->spec_is_dwz, cu);
+      real_pdi = res.pdi;
+      cu = res.cu;
+    }
 
   if (real_pdi->die_parent != NULL)
     return;
@@ -19040,7 +19065,9 @@ partial_die_info::fixup (struct dwarf2_cu *cu)
     {
       struct partial_die_info *spec_die;
 
-      spec_die = find_partial_die (spec_offset, spec_is_dwz, cu);
+      auto res = find_partial_die (spec_offset, spec_is_dwz, cu);
+      spec_die = res.pdi;
+      cu = res.cu;
 
       spec_die->fixup (cu);
 
@@ -24609,7 +24636,24 @@ dwarf_decode_macro_bytes (struct dwarf2_cu *cu,
 			 line == 0 ? _("zero") : _("non-zero"), line, body);
 
 	    if (is_define)
-	      parse_macro_definition (current_file, line, body);
+	      {
+		if (body != NULL)
+		  parse_macro_definition (current_file, line, body);
+		else
+		  {
+		    /* Fedora's rpm-build's "debugedit" binary
+		       corrupted .debug_macro sections.
+
+		       For more info, see
+		       https://bugzilla.redhat.com/show_bug.cgi?id=1708786 */
+		    complaint (_("debug info gives %s invalid macro definition "
+				 "without body (corrupted?) at line %d"
+				 "on file %s"),
+			       at_commandline ? _("command-line")
+			       : _("in-file"),
+			       line, current_file->filename);
+		  }
+	      }
 	    else
 	      {
 		gdb_assert (macinfo_type == DW_MACRO_undef
