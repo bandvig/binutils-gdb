@@ -1,3 +1,235 @@
+2019-05-24  Szabolcs Nagy  <szabolcs.nagy@arm.com>
+
+	* config/tc-aarch64.c (aarch64_elf_copy_symbol_attributes): Define.
+	* config/tc-aarch64.h (aarch64_elf_copy_symbol_attributes): Declare.
+	(OBJ_COPY_SYMBOL_ATTRIBUTES): Define.
+	* testsuite/gas/aarch64/symbol-variant_pcs-3.d: New test.
+	* testsuite/gas/aarch64/symbol-variant_pcs-3.s: New test.
+
+2019-05-24  Szabolcs Nagy  <szabolcs.nagy@arm.com>
+
+	* config/tc-aarch64.c (s_variant_pcs): New function.
+	* doc/c-aarch64.texi: Document .variant_pcs.
+	* testsuite/gas/aarch64/symbol-variant_pcs-1.d: New test.
+	* testsuite/gas/aarch64/symbol-variant_pcs-1.s: New test.
+	* testsuite/gas/aarch64/symbol-variant_pcs-2.d: New test.
+	* testsuite/gas/aarch64/symbol-variant_pcs-2.s: New test.
+
+2019-05-24  Alan Modra  <amodra@gmail.com>
+
+	* po/POTFILES.in: Regenerate.
+
+2019-05-24  Alan Modra  <amodra@gmail.com>
+
+	* config/tc-ppc.c (ppc_elf_suffix): Support @pcrel, @got@pcrel,
+	@plt@pcrel, @higher34, @highera34, @highest34, and @highesta34.
+	(fixup_size): Handle new powerxx relocs.
+	(md_assemble): Warn for @pcrel on non-prefix insns.
+	Accept @l, @h and @ha on prefix insns, and infer reloc without
+	any @ suffix.  Translate powerxx relocs to suit DQ and DS field
+	instructions.  Include operand tests as well as opcode test to
+	translate BFD_RELOC_HI16_S to BFD_RELOC_PPC_16DX_HA.
+	(ppc_fix_adjustable): Return false for pcrel GOT and PLT relocs.
+	(md_apply_fix): Handle new powerxx relocs.
+	* config/tc-ppc.h (TC_FORCE_RELOCATION_SUB_LOCAL): Accept
+	BFD_RELOC_PPC64_ADDR16_HIGHER34, BFD_RELOC_PPC64_ADDR16_HIGHERA34,
+	BFD_RELOC_PPC64_ADDR16_HIGHEST34, BFD_RELOC_PPC64_ADDR16_HIGHESTA34,
+	BFD_RELOC_PPC64_D34, and BFD_RELOC_PPC64_D28.
+	* testsuite/gas/ppc/prefix-reloc.d,
+	* testsuite/gas/ppc/prefix-reloc.s: New test.
+	* testsuite/gas/ppc/ppc.exp: Run it.
+
+2019-05-24  Peter Bergner  <bergner@linux.ibm.com>
+	    Alan Modra  <amodra@gmail.com>
+
+	* config/tc-ppc.c (ppc_insert_operand): Only sign extend fields that
+	are 32-bits or smaller.
+	* messages.c (as_internal_value_out_of_range): Do not truncate
+	variables and use BFD_VMA_FMT to print them.
+	* testsuite/gas/ppc/prefix-pcrel.s,
+	* testsuite/gas/ppc/prefix-pcrel.d: New test.
+	* testsuite/gas/ppc/ppc.exp: Run it.
+
+2019-05-24  Peter Bergner  <bergner@linux.ibm.com>
+	    Alan Modra  <amodra@gmail.com>
+
+	* config/tc-ppc.c (ppc_setup_opcodes): Handle prefix_opcodes.
+	(struct insn_label_list): New.
+	(insn_labels, free_insn_labels): New variables.
+	(ppc_record_label, ppc_clear_labels, ppc_start_line_hook): New funcs.
+	(ppc_frob_label, ppc_new_dot_label): Move functions earlier in file
+	and call ppc_record_label.
+	(md_assemble): Handle 64-bit prefix instructions.  Align labels
+	that are on the same line as a prefix instruction.
+	* config/tc-ppc.h (tc_frob_label, ppc_frob_label): Move to
+	later in the file.
+	(md_start_line_hook): Define.
+	(ppc_start_line_hook): Declare.
+	* testsuite/gas/ppc/prefix-align.d,
+	* testsuite/gas/ppc/prefix-align.s: New test.
+	* testsuite/gas/ppc/ppc.exp: Run new test.
+
+2019-05-23  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* configure.ac: Handle bpf-*-* targets.
+	* configure.tgt (generic_target): Likewise.
+	* configure: Regenerate.
+	* Makefile.am (TARGET_CPU_CFILES): Add tc-bpf.c.
+	(TARGET_CPU_HFILES): Add tc-bpf.h.
+	* Makefile.in: Regenerated.
+	* config/tc-bpf.c: New file.
+	* config/tc-bpf.h: Likewise.
+	* doc/Makefile.am (CPU_DOCS): Add c-bpf.texi.
+	* doc/Makefile.in: Regenerated.
+	* doc/all.texi: set BPF.
+	* doc/as.texi: Add eBPF contents.
+	* doc/c-bpf.texi: New file.
+	* testsuite/gas/bpf/alu.d: New file.
+	* testsuite/gas/bpf/mem-be.d: Likewise.
+	* testsuite/gas/bpf/mem.s: Likewise.
+	* testsuite/gas/bpf/mem.d: Likewise.
+	* testsuite/gas/bpf/lddw-be.d: Likewise.
+	* testsuite/gas/bpf/lddw.s: Likewise.
+	* testsuite/gas/bpf/lddw.d: Likewise.
+	* testsuite/gas/bpf/jump-be.d: Likewise.
+	* testsuite/gas/bpf/jump.s: Likewise.
+	* testsuite/gas/bpf/jump.d: Likewise.
+	* testsuite/gas/bpf/exit-be.d: Likewise.
+	* testsuite/gas/bpf/exit.s: Likewise.
+	* testsuite/gas/bpf/exit.d: Likewise.
+	* testsuite/gas/bpf/call-be.d: Likewise.
+	* testsuite/gas/bpf/call.s: Likewise.
+	* testsuite/gas/bpf/call.d: Likewise.
+	* testsuite/gas/bpf/bpf.exp: Likewise.
+	* testsuite/gas/bpf/atomic-be.d: Likewise.
+	* testsuite/gas/bpf/atomic.s: Likewise.
+	* testsuite/gas/bpf/atomic.d: Likewise.
+	* testsuite/gas/bpf/alu-be.d: Likewise.
+	* testsuite/gas/bpf/alu32-be.d: Likewise.
+	* testsuite/gas/bpf/alu32.s: Likewise.
+	* testsuite/gas/bpf/alu32.d: Likewise.
+	* testsuite/gas/bpf/alu.s: Likewise.
+	* testsuite/gas/all/gas.exp: Introduce a nop_type for eBPF.
+	* testsuite/gas/all/org-1.s: Support nop_type 6.
+	* testsuite/gas/all/org-1.l: Updated to reflect changes in
+	org-1.s.
+
+2019-05-22  John Darrington <john@darrington.wattle.id.au>
+
+	* config/tc-s12z.c (s12z_strtol): New function. (md_show_usage): Update.
+	(md_parse_option): new case OPTION_DOLLAR_HEX. (s12z_init_after_args):
+	(<global>): Use s12z_strtol instead of strtol.
+	* doc/c-s12z.texi (S12Z Options): Document new option -mdollar-hex.
+	* testsuite/gas/s12z/dollar-hex.d: New file.
+	* testsuite/gas/s12z/dollar-hex.s: New file.
+	* testsuite/gas/s12z/s12z.exp: Add them.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* config/tc-arm.c (parse_operands): Update case OP_RVC to
+	parse p0 and P0.
+	(do_vmrs): Add checks for valid operands with respect to
+	cpu and fpu options.
+	(do_vmsr): Likewise.
+	(reg_names): New reg_names for FPSCR_nzcvqc, VPR, FPCXT_NS
+	and FPCXT_S.
+	* testsuite/gas/arm/armv8_1-m-spec-reg.d: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg.s: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad1.d: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad2.d: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad3.d: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad1.l: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad2.l: New.
+	* testsuite/gas/arm/armv8_1-m-spec-reg-bad3.l: New.
+	* testsuite/gas/arm/vfp1xD.d: Updated to allow new valid values.
+	* testsuite/gas/arm/vfp1xD_t2.d: Likewise.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* config/tc-arm.c (TOGGLE_BIT): New.
+	(T16_32_TAB): New entries for cinc, cinv, cneg, csinc,
+	csinv, csneg, cset, csetm and csel.
+	(operand_parse_code): New OP_RR_ZR.
+	(parse_operand): Handle case for OP_RR_ZR.
+	(do_t_cond): New.
+	(insns): New instructions for cinc, cinv, cneg, csinc,
+	csinv, csneg, cset, csetm, csel.
+	* testsuite/gas/arm/armv8_1-m-cond-bad.d: New test.
+	* testsuite/gas/arm/armv8_1-m-cond-bad.l: New test.
+	* testsuite/gas/arm/armv8_1-m-cond-bad.s: New test.
+	* testsuite/gas/arm/armv8_1-m-cond.d: New test.
+	* testsuite/gas/arm/armv8_1-m-cond.s: New test.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* config/tc-arm.c (operand_parse_code): New entries for
+	OP_RRnpcsp_I32 (register or integer operands).
+	(do_mve_scalar_shift): New.
+	(insns): New instructions for asrl, lsll, lsrl, sqrshrl, sqrshr, sqshl
+	sqshll, srshr, srshrl, uqrshll, uqrshl, uqshll, uqshl, urshrl and urshr.
+	* testsuite/gas/arm/mve-shift.d: New.
+	* testsuite/gas/arm/mve-shift.s: New.
+	* testsuite/gas/arm/mve-shift-bad.d: New.
+	* testsuite/gas/arm/mve-shift-bad.s: New.
+	* testsuite/gas/arm/mve-shift-bad.l: New.
+
+2019-05-21  Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	* testsuite/gas/mips/r6-branch-constraints.s: Rename to ...
+	* testsuite/gas/mips/r6-reg-constraints.s: this and add test
+	case for DAUI.
+	* testsuite/gas/mips/r6-branch-constraints.l: Rename to ...
+	* testsuite/gas/mips/r6-reg-constraints.l: this and add test
+	for DAUI.
+	* testsuite/gas/mips/mips.exp: Rename test from
+	r6-branch-constraints to r6-reg-constraints.
+
+2019-05-21  Andre Vieira  <andre.simoesdiasvieira@arm.com>
+
+	PR 24559
+	* config/tc-arm.c (move_or_literal_pool): Set size_req to 0 for MOVW
+	replacement.
+	* testsuite/gas/arm/load-pseudo.s: New test input.
+	* testsuite/gas/arm/m0-load-pseudo.d: New test.
+	* testsuite/gas/arm/m23-load-pseudo.d: New test.
+	* testsuite/gas/arm/m33-load-pseudo.d: New test.
+
+2019-05-21  Andre Vieira  <andre.simoesdiasvieira@arm.com>
+
+	* testsuite/gas/arm/armv8_1-m-bf.d: Allow different branch target naming
+	conventions.
+	* testsuite/gas/arm/armv8_1-m-bfl.d: Likewise.
+	* testsuite/gas/arm/armv8_1-m-bfcsel.d: Likewise.
+	* testsuite/gas/arm/armv8_1-m-loloop.d: Likewise.
+	* testsuite/gas/arm/armv8_1-m-bf-rel.d: Skip for vxworks.
+	* testsuite/gas/arm/armv8_1-m-bf-rela.d: New test.
+	* testsuite/gas/arm/armv8_1-m-bfl-rel.d: Skip for vxworks.
+	* testsuite/gas/arm/armv8_1-m-bfl-rela.d: New test.
+
+2019-05-21  John Darrington <john@darrington.wattle.id.au>
+
+	* expr.c (literal_prefix_dollar_hex): New variable.
+	(operand)[case '$']: Use the new variable instead of the old macro.
+	Also, move this instance of "case '$'" next to the other one, and
+	enable it only in the complementary proprocessor case.
+	* expr.h (literal_prefix_dollar_hex): Declare it.
+	* config/tc-epiphany.c (md_begin): Assign literal_prefix_dollar_hex.
+	* config/tc-ip2k.c:      ditto
+	* config/tc-mt.c:        ditto
+	* config/tc-epiphany.h (LITERAL_PREFIXDOLLAR_HEX): Remove macro definition.
+	* config/tc-ip2k.h:      ditto
+	* config/tc-mt.h:        ditto
+
+2019-05-20  Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	PR 14798
+	* config/tc-mips.c (s_mips_globl): Only treat symbols that are
+	not explicitly labelled as BSF_OBJECTs for IRIX targets.
+	* testsuite/gas/mips/pr14798.s: New test source.
+	* testsuite/gas/mips/pr14798-irix.d: New test.
+	* testsuite/gas/mips/pr14798.d: Likewise.
+	* testsuite/gas/mips/mips.exp: Run the new tests.
+
 2019-05-17  John Darrington  <john@darrington.wattle.id.au>
 
 	* doc/c-arm.texi (ARM Options): Remove "(r)" and "(tm)"

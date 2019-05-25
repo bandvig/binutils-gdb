@@ -102,6 +102,7 @@
 #include "elf/d10v.h"
 #include "elf/d30v.h"
 #include "elf/dlx.h"
+#include "elf/bpf.h"
 #include "elf/epiphany.h"
 #include "elf/fr30.h"
 #include "elf/frv.h"
@@ -781,6 +782,7 @@ guess_is_rela (unsigned int e_machine)
     case EM_SCORE:
     case EM_XGATE:
     case EM_NFP:
+    case EM_BPF:
       return FALSE;
 
       /* Targets that use RELA relocations.  */
@@ -1482,6 +1484,10 @@ dump_relocations (Filedata *          filedata,
 	  rtype = elf_visium_reloc_type (type);
 	  break;
 
+        case EM_BPF:
+          rtype = elf_bpf_reloc_type (type);
+          break;
+
 	case EM_ADAPTEVA_EPIPHANY:
 	  rtype = elf_epiphany_reloc_type (type);
 	  break;
@@ -1804,6 +1810,7 @@ get_aarch64_dynamic_type (unsigned long type)
     {
     case DT_AARCH64_BTI_PLT:  return "AARCH64_BTI_PLT";
     case DT_AARCH64_PAC_PLT:  return "AARCH64_PAC_PLT";
+    case DT_AARCH64_VARIANT_PCS:  return "AARCH64_VARIANT_PCS";
     default:
       return NULL;
     }
@@ -11096,6 +11103,22 @@ get_solaris_symbol_visibility (unsigned int visibility)
 }
 
 static const char *
+get_aarch64_symbol_other (unsigned int other)
+{
+  static char buf[32];
+
+  if (other & STO_AARCH64_VARIANT_PCS)
+    {
+      other &= ~STO_AARCH64_VARIANT_PCS;
+      if (other == 0)
+	return "VARIANT_PCS";
+      snprintf (buf, sizeof buf, "VARIANT_PCS | %x", other);
+      return buf;
+    }
+  return NULL;
+}
+
+static const char *
 get_mips_symbol_other (unsigned int other)
 {
   switch (other)
@@ -11206,6 +11229,9 @@ get_symbol_other (Filedata * filedata, unsigned int other)
 
   switch (filedata->file_header.e_machine)
     {
+    case EM_AARCH64:
+      result = get_aarch64_symbol_other (other);
+      break;
     case EM_MIPS:
       result = get_mips_symbol_other (other);
       break;
@@ -12410,6 +12436,8 @@ is_32bit_abs_reloc (Filedata * filedata, unsigned int reloc_type)
     case EM_AARCH64:
       return (reloc_type == 258
 	      || reloc_type == 1); /* R_AARCH64_ABS32 || R_AARCH64_P32_ABS32 */
+    case EM_BPF:
+      return reloc_type == 11; /* R_BPF_DATA_32 */
     case EM_ADAPTEVA_EPIPHANY:
       return reloc_type == 3;
     case EM_ALPHA:

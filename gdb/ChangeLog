@@ -1,3 +1,38 @@
+2019-05-22  Tom Tromey  <tromey@adacore.com>
+
+	* target.c (target_follow_exec): Constify parameter.
+	* target-delegates.c: Rebuild.
+	* remote.c (remote_target::follow_exec): Constify parameter.
+	* infrun.c (follow_exec): Constify parameter.
+	* target.h (struct target_ops) <follow_exec>: Constify parameter.
+	(target_follow_exec): Likewise.
+
+2019-05-22  Alan Hayward  <alan.hayward@arm.com>
+
+	* aarch64-tdep.c (aarch64_execute_dwarf_cfa_vendor_op): Treat
+	DW_CFA_AARCH64_negate_ra_state as nop on non pauth targets.
+
+2019-05-22  Alan Hayward  <alan.hayward@arm.com>
+
+	* NEWS: Add debugredirect and testsuite sections.
+
+2019-05-22  Simon Cook  <simon.cook@embecosm.com>
+
+	* riscv-tdep.c (riscv_gdbarch_init): Support determining flen from
+	target descriptions using exclusively floating point register name
+	aliases.
+
+2019-05-21  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	PR gdb/18644:
+	* f-lang.c (build_fortran_types): Handle the case where
+	gdbarch_floatformat_for_type returns a nullptr.
+
+2019-05-21  Tom de Vries  <tdevries@suse.de>
+
+	PR cli/24587
+	* cli/cli-cmds.c (complete_command): Fix use of unitialized variable.
+
 2019-05-18  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	PR gdb/18644:

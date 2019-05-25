@@ -1,3 +1,93 @@
+2019-05-24  Alan Modra  <amodra@gmail.com>
+
+	* po/POTFILES.in: Regenerate.
+
+2019-05-24  Peter Bergner  <bergner@linux.ibm.com>
+	    Alan Modra  <amodra@gmail.com>
+
+	* ppc-opc.c (insert_d34, extract_d34, insert_nsi34, extract_nsi34),
+	(insert_pcrel, extract_pcrel, extract_pcrel0): New functions.
+	(extract_esync, extract_raq, extract_tbr, extract_sxl): Comment.
+	(powerpc_operands <D34, SI34, NSI34, PRA0, PRAQ, PCREL, PCREL0,
+	XTOP>): Define and add entries.
+	(P8LS, PMLS, P_D_MASK, P_DRAPCREL_MASK): Define.
+	(prefix_opcodes): Add pli, paddi, pla, psubi, plwz, plbz, pstw,
+	pstb, plhz, plha, psth, plfs, plfd, pstfs, pstfd, plq, plxsd,
+	plxssp, pld, plwa, pstxsd, pstxssp, pstxv, pstd, and pstq.
+
+2019-05-24  Peter Bergner  <bergner@linux.ibm.com>
+	    Alan Modra  <amodra@gmail.com>
+
+	* ppc-dis.c (ppc_opts): Add "future" entry.
+	(PREFIX_OPCD_SEGS): Define.
+	(prefix_opcd_indices): New array.
+	(disassemble_init_powerpc): Initialize prefix_opcd_indices.
+	(lookup_prefix): New function.
+	(print_insn_powerpc): Handle 64-bit prefix instructions.
+	* ppc-opc.c (PREFIX_OP, PREFIX_FORM, SUFFIX_MASK, PREFIX_MASK),
+	(PMRR, POWERXX): Define.
+	(prefix_opcodes): New instruction table.
+	(prefix_num_opcodes): New constant.
+
+2019-05-23  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* configure.ac (SHARED_DEPENDENCIES): Add case for bfd_bpf_arch.
+	* configure: Regenerated.
+	* Makefile.am: Add rules for the files generated from cpu/bpf.cpu
+	and cpu/bpf.opc.
+	(HFILES): Add bpf-desc.h and bpf-opc.h.
+	(TARGET_LIBOPCODES_CFILES): Add bpf-asm.c, bpf-desc.c, bpf-dis.c,
+	bpf-ibld.c and bpf-opc.c.
+	(BPF_DEPS): Define.
+	* Makefile.in: Regenerated.
+	* disassemble.c (ARCH_bpf): Define.
+	(disassembler): Add case for bfd_arch_bpf.
+	(disassemble_init_for_target): Likewise.
+	(enum epbf_isa_attr): Define.
+	* disassemble.h: extern print_insn_bpf.
+	* bpf-asm.c: Generated.
+	* bpf-opc.h: Likewise.
+	* bpf-opc.c: Likewise.
+	* bpf-ibld.c: Likewise.
+	* bpf-dis.c: Likewise.
+	* bpf-desc.h: Likewise.
+	* bpf-desc.c: Likewise.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* arm-dis.c (coprocessor_opcodes): New instructions for VMRS
+	and VMSR with the new operands.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* arm-dis.c (enum mve_instructions): New enum
+	for csinc, csinv, csneg, csel, cset, csetm, cinv, cinv
+	and cneg.
+	(mve_opcodes): New instructions as above.
+	(is_mve_encoding_conflict): Add cases for csinc, csinv,
+	csneg and csel.
+	(print_insn_mve): Accept new %<bitfield>c and %<bitfield>C.
+
+2019-05-21  Sudakshina Das  <sudi.das@arm.com>
+
+	* arm-dis.c (emun mve_instructions): Updated for new instructions.
+	(mve_opcodes): New instructions for asrl, lsll, lsrl, sqrshrl,
+	sqrshr, sqshl, sqshll, srshr, srshrl, uqrshll, uqrshl, uqshll,
+	uqshl, urshrl and urshr.
+	(is_mve_okay_in_it): Add new instructions to TRUE list.
+	(is_mve_unpredictable): Add cases for UNPRED_R13 and UNPRED_R15.
+	(print_insn_mve): Updated to accept new %j,
+	%<bitfield>m and %<bitfield>n patterns.
+
+2019-05-21  Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	* mips-opc.c (mips_builtin_opcodes): Change source register
+	constraint for DAUI.
+
+2019-05-20  Nick Clifton  <nickc@redhat.com>
+
+	* po/fr.po: Updated French translation.
+
 2019-05-16  Andre Vieira  <andre.simoesdiasvieira@arm.com>
 	    Michael Collison <michael.collison@arm.com>
 

@@ -1,3 +1,45 @@
+2019-05-24  Tom de Vries  <tdevries@suse.de>
+
+	* gdb.dwarf2/gdb-add-index.exp: New file.
+
+2019-05-22  Tom Tromey  <tromey@adacore.com>
+
+	* gdb.base/info-shared.exp (check_info_shared): Use "style".
+	* gdb.base/style.exp: Use "style".
+	* lib/gdb-utils.exp (style): New proc.
+
+2019-05-22  Tom de Vries  <tdevries@suse.de>
+
+	* gdb.base/align.exp: Require c++11.
+
+2019-05-22  Tom de Vries  <tdevries@suse.de>
+
+	PR testsuite/24586
+	* gdb.python/py-mi-var-info-path-expression.exp: Call
+	mi_skip_python_tests to check if python is supported.
+
+2019-05-22  Alan Hayward  <alan.hayward@arm.com>
+
+	* gdb.arch/aarch64-pauth.c: New test.
+	* gdb.arch/aarch64-pauth.exp: New file.
+
+2019-05-22  Alan Hayward  <alan.hayward@arm.com>
+
+	* README (Re-running Tests Outside The Testsuite): New section.
+
+2019-05-21  Tom de Vries  <tdevries@suse.de>
+
+	* gdb.arch/amd64-eval.exp: Require c++11.
+	* gdb.base/max-depth.exp: Same.
+	* gdb.compile/compile-cplus-array-decay.exp: Same.
+	* gdb.cp/meth-typedefs.exp: Same.
+	* gdb.cp/subtypes.exp: Same.
+	* gdb.cp/temargs.exp: Same.
+
+2019-05-21  Alan Hayward  <alan.hayward@arm.com>
+
+	* lib/gdbserver-support.exp (gdbserver_run): Mark kill as optional.
+
 2019-05-18  Andrew Burgess  <andrew.burgess@embecosm.com>
 
 	PR gdb/18644
