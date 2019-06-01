@@ -1,3 +1,75 @@
+2019-05-28  Faraz Shahbazker  <fshahbazker@wavecomp.com>
+
+	* elfxx-mips.c (mips_elf_calculate_relocation) <R_MIPS_PCHI16>:
+	Remove overflow check.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* cofflink.c (coff_link_check_archive_element): Don't assume
+	element is a coff object file after calling add_archive_element.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* elf32-microblaze.c (microblaze_elf_finish_dynamic_sections): Don't
+	attempt to set sh_entsize for excluded PLT section.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* elf64-alpha.c (elf64_alpha_relocate_section): Don't attempt
+	to emit R_ALPHA_GOTTPREL in PIEs, for which no space is
+	allocated in alpha_dynamic_entries_for_reloc.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* elf32-lm32.c (lm32_elf_finish_dynamic_sections): Don't segfault
+	on NULL output_section.
+	* elflink.c (elf_final_link_free): Don't free -1 symshndxbuf.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* elf32-m68k.c (elf_m68k_get_got_entry): Don't create a new
+	entry when MUST_FIND.  Abort when MUST_FIND not found.
+	(elf_m68k_get_bfd2got_entry): Likewise.
+	(elf_m68k_relocate_section): Remove now useless assert.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* elf64-hppa.c (elf64_hppa_finalize_dynreloc): Get the output bfd
+	from bfd_link_info, not an output section owner.
+	(elf64_hppa_finish_dynamic_symbol, elf64_hppa_finalize_opd): Likewise.
+	(elf_hppa_final_link_relocate): Likewise.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* aout-tic30.c (MY_bfd_final_link): Don't segfault on missing
+	create_object_symbols_section, obj_textsec, obj_datasec or
+	obj_bsssec.  Fix other errors in placement.
+	* config.bfd: Obsolete tic30-aout.
+
+2019-05-28  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* dwarf2.c (save_section_vma, section_vma_same): Check for NULL
+	end of section list as well as section_count.
+	* xcofflink.c (xcoff_link_add_symbols): Fix temporarily changed
+	section list before returning error.
+
+2019-05-27  Alan Modra  <amodra@gmail.com>
+
+	* elf.c (bfd_elf_set_group_contents): Exit on zero size section.
+
+2019-05-27  Alan Modra  <amodra@gmail.com>
+
+	PR 24596
+	* linker.c (_bfd_generic_link_output_symbols): Heed BSF_KEEP.
+
 2019-05-24  Szabolcs Nagy  <szabolcs.nagy@arm.com>
 
 	* elfnn-aarch64.c (elfNN_aarch64_merge_symbol_attribute): New function.

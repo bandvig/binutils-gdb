@@ -16,7 +16,7 @@
 
 * Support for Pointer Authentication on AArch64 Linux.
 
-* Two new convernience functions $_cimag and $_creal that extract the
+* Two new convenience functions $_cimag and $_creal that extract the
   imaginary and real parts respectively from complex numbers.
 
 * Python API
@@ -27,7 +27,19 @@
      'array_indexes', 'symbols', 'unions', 'deref_refs', 'actual_objects',
      'static_members', 'max_elements', 'repeat_threshold', and 'format'.
 
+* New built-in convenience variables $_shell_exitcode and $_shell_exitsignal
+  provide the exitcode or exit status of the shell commands launched by
+  GDB commands such as "shell", "pipe" and "make".
+
 * New commands
+
+| [COMMAND] | SHELL_COMMAND
+| -d DELIM COMMAND DELIM SHELL_COMMAND
+pipe [COMMAND] | SHELL_COMMAND
+pipe -d DELIM COMMAND DELIM SHELL_COMMAND
+  Executes COMMAND and sends its output to SHELL_COMMAND.
+  With no COMMAND, repeat the last executed command
+  and send its output to SHELL_COMMAND.
 
 set may-call-functions [on|off]
 show may-call-functions
@@ -38,6 +50,13 @@ show may-call-functions
   such function calls.  If function calls are forbidden, GDB will throw
   an error when a command (such as print expression) calls a function
   in the program.
+
+set print finish [on|off]
+show print finish
+  This controls whether the `finish' command will display the value
+  that is returned by the current function.  When `off', the value is
+  still entered into the value history, but it is not printed.  The
+  default is `on'.
 
 set print max-depth
 show print max-depth

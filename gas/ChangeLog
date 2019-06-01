@@ -1,3 +1,27 @@
+2019-05-30  Jim Wilson  <jimw@sifive.com>
+
+	* config/tc-riscv.c (riscv_ip) <'u'>: Move O_constant check inside if
+	statement.  Delete O_symbol and O_constant check after if statement.
+	* testsuite/gas/riscv/auipc-parsing.s: Test lui with missing %hi.
+	* testsuite/gas/riscv/auipc-parsing.l: Update.
+
+2019-05-28  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR gas/24625
+	* testsuite/gas/i386/inval-avx512f.s: Add tests for AVX512_BF16
+	instructions with invalid broadcast.
+	* testsuite/gas/i386/x86-64-inval-avx512f.s: Likewise.
+	* testsuite/gas/i386/inval-avx512f.l: Updated.
+	* testsuite/gas/i386/x86-64-inval-avx512f.l: Likewise.
+
+2019-05-27  Alan Modra  <amodra@gmail.com>
+
+	* config/tc-ppc.c (is_ppc64_target): New function.
+	(md_show_usage): Split up usage message.  Don't show -a64 when
+	unsupported.
+	testsuite/gas/ppc/ppc.exp (supports_ppc64): New.
+	(prefix-reloc): Only run for ppc64.
+
 2019-05-24  Szabolcs Nagy  <szabolcs.nagy@arm.com>
 
 	* config/tc-aarch64.c (aarch64_elf_copy_symbol_attributes): Define.
