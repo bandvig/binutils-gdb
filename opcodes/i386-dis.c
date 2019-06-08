@@ -845,7 +845,9 @@ enum
   MOD_0F382A_PREFIX_2,
   MOD_0F38F5_PREFIX_2,
   MOD_0F38F6_PREFIX_0,
+  MOD_0F38F8_PREFIX_1,
   MOD_0F38F8_PREFIX_2,
+  MOD_0F38F8_PREFIX_3,
   MOD_0F38F9_PREFIX_0,
   MOD_62_32BIT,
   MOD_C4_32BIT,
@@ -1611,6 +1613,7 @@ enum
   PREFIX_EVEX_0F3864,
   PREFIX_EVEX_0F3865,
   PREFIX_EVEX_0F3866,
+  PREFIX_EVEX_0F3868,
   PREFIX_EVEX_0F3870,
   PREFIX_EVEX_0F3871,
   PREFIX_EVEX_0F3872,
@@ -1934,7 +1937,15 @@ enum
   EVEX_LEN_0F6E_P_2 = 0,
   EVEX_LEN_0F7E_P_1,
   EVEX_LEN_0F7E_P_2,
-  EVEX_LEN_0FD6_P_2
+  EVEX_LEN_0FD6_P_2,
+  EVEX_LEN_0F3A18_P_2_W_0,
+  EVEX_LEN_0F3A18_P_2_W_1,
+  EVEX_LEN_0F3A19_P_2_W_0,
+  EVEX_LEN_0F3A19_P_2_W_1,
+  EVEX_LEN_0F3A1A_P_2_W_0,
+  EVEX_LEN_0F3A1A_P_2_W_1,
+  EVEX_LEN_0F3A1B_P_2_W_0,
+  EVEX_LEN_0F3A1B_P_2_W_1
 };
 
 enum
@@ -2199,6 +2210,7 @@ enum
   EVEX_W_0F3862_P_2,
   EVEX_W_0F3863_P_2,
   EVEX_W_0F3866_P_2,
+  EVEX_W_0F3868_P_3,
   EVEX_W_0F3870_P_2,
   EVEX_W_0F3871_P_2,
   EVEX_W_0F3872_P_1,
@@ -4444,8 +4456,9 @@ static const struct dis386 prefix_table[][4] = {
   /* PREFIX_0F38F8 */
   {
     { Bad_Opcode },
-    { Bad_Opcode },
+    { MOD_TABLE (MOD_0F38F8_PREFIX_1) },
     { MOD_TABLE (MOD_0F38F8_PREFIX_2) },
+    { MOD_TABLE (MOD_0F38F8_PREFIX_3) },
   },
 
   /* PREFIX_0F38F9 */
@@ -10520,8 +10533,16 @@ static const struct dis386 mod_table[][2] = {
     { "wrssK",		{ M, Gdq }, PREFIX_OPCODE },
   },
   {
+    /* MOD_0F38F8_PREFIX_1 */
+    { "enqcmds",	{ Gva, M }, PREFIX_OPCODE },
+  },
+  {
     /* MOD_0F38F8_PREFIX_2 */
     { "movdir64b",	{ Gva, M }, PREFIX_OPCODE },
+  },
+  {
+    /* MOD_0F38F8_PREFIX_3 */
+    { "enqcmd",		{ Gva, M }, PREFIX_OPCODE },
   },
   {
     /* MOD_0F38F9_PREFIX_0 */
@@ -12140,6 +12161,14 @@ print_insn (bfd_vma pc, disassemble_info *info)
 		}
 	    }
 	}
+    }
+
+  /* If VEX.vvvv and EVEX.vvvv are unused, they must be all 1s, which
+     are all 0s in inverted form.  */
+  if (need_vex && vex.register_specifier != 0)
+    {
+      (*info->fprintf_func) (info->stream, "(bad)");
+      return end_codep - priv.the_buffer;
     }
 
   /* Check if the REX prefix is used.  */
@@ -15908,6 +15937,7 @@ OP_VEX (int bytemode, int sizeflag ATTRIBUTE_UNUSED)
     return;
 
   reg = vex.register_specifier;
+  vex.register_specifier = 0;
   if (address_mode != mode_64bit)
     reg &= 7;
   else if (vex.evex && !vex.v)
@@ -16191,6 +16221,7 @@ OP_Vex_2src_1 (int bytemode, int sizeflag)
   if (vex.w)
     {
       unsigned int reg = vex.register_specifier;
+      vex.register_specifier = 0;
 
       if (address_mode != mode_64bit)
 	reg &= 7;
@@ -16208,6 +16239,7 @@ OP_Vex_2src_2 (int bytemode, int sizeflag)
   else
     {
       unsigned int reg = vex.register_specifier;
+      vex.register_specifier = 0;
 
       if (address_mode != mode_64bit)
 	reg &= 7;
@@ -16285,11 +16317,7 @@ static void
 OP_EX_Vex (int bytemode, int sizeflag)
 {
   if (modrm.mod != 3)
-    {
-      if (vex.register_specifier != 0)
-	BadOp ();
-      need_vex_reg = 0;
-    }
+    need_vex_reg = 0;
   OP_EX (bytemode, sizeflag);
 }
 
@@ -16297,11 +16325,7 @@ static void
 OP_XMM_Vex (int bytemode, int sizeflag)
 {
   if (modrm.mod != 3)
-    {
-      if (vex.register_specifier != 0)
-	BadOp ();
-      need_vex_reg = 0;
-    }
+    need_vex_reg = 0;
   OP_XMM (bytemode, sizeflag);
 }
 
@@ -16581,6 +16605,7 @@ OP_LWP_E (int bytemode ATTRIBUTE_UNUSED, int sizeflag ATTRIBUTE_UNUSED)
 {
   const char **names;
   unsigned int reg = vex.register_specifier;
+  vex.register_specifier = 0;
 
   if (rex & REX_W)
     names = names64;

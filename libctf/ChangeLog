@@ -1,3 +1,61 @@
+2019-06-06  Nick Alcock  <nick.alcock@oracle.com>
+
+	* ctf-decls.h: Include <libiberty.h>.
+	* ctf-lookup.c (ctf_lookup_by_name): Call xstrndup(), not strndup().
+
+2019-06-06  Nick Alcock  <nick.alcock@oracle.com>
+
+	* ctf-dump.c (ctf_dump_format_type): Cast size_t's used in printf()s.
+	(ctf_dump_objts): Likewise.
+	(ctf_dump_funcs): Likewise.
+	(ctf_dump_member): Likewise.
+	(ctf_dump_str): Likewise.
+
+2019-06-06  Nick Alcock  <nick.alcock@oracle.com>
+
+	* ctf-archive.c (arc_mmap_header): Mark fd as potentially unused.
+	* ctf-subr.c (ctf_data_protect): Mark both args as potentially unused.
+
+2019-06-05  Nick Alcock  <nick.alcock@oracle.com>
+
+	* ctf-archive.c (ctf_arc_write): Eschew %zi format specifier.
+	(ctf_arc_open_by_offset): Likewise.
+	* ctf-create.c (ctf_add_type): Likewise.
+
+2019-06-04  Tom Tromey  <tromey@adacore.com>
+
+	* ctf-create.c (ctf_add_encoded, ctf_add_slice)
+	(ctf_add_member_offset): Use CHAR_BIT, not NBBY.
+
+2019-06-04  Nick Alcock  <nick.alcock@oracle.com>
+
+	* configure.ac: Check for O_CLOEXEC.
+	* ctf-decls.h (O_CLOEXEC): Define (to 0), if need be.
+	* config.h.in: Regenerate.
+	* configure: Likewise.
+
+2019-06-04  Nick Alcock  <nick.alcock@oracle.com>
+
+	* qsort_r.c: Rename to...
+	* ctf-qsort_r.c: ... this.
+	(_quicksort): Define to ctf_qsort_r.
+	* ctf-decls.h (qsort_r): Remove.
+	(ctf_qsort_r): Add.
+	(struct ctf_qsort_arg): New, transport the real ARG and COMPAR.
+	(ctf_qsort_compar_thunk): Rearrange the arguments to COMPAR.
+	* Makefile.am (libctf_a_LIBADD): Remove.
+	(libctf_a_SOURCES): New, add ctf-qsort_r.c.
+	* ctf-archive.c (ctf_arc_write): Call ctf_qsort_r, not qsort_r.
+	* ctf-create.c (ctf_update): Likewise.
+	* configure.ac: Check for BSD versus GNU qsort_r signature.
+	* Makefile.in: Regenerate.
+	* config.h.in: Likewise.
+	* configure: Likewise.
+
+2019-06-03  Nick Alcock  <nick.alcock@oracle.com>
+
+	* ctf-dump.c (ctf_dump_funcs): Free in the right place.
+
 2019-05-29  Nick Alcock  <nick.alcock@oracle.com>
 
 	* Makefile.am (ZLIB): New.

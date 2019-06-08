@@ -1,3 +1,18 @@
+2019-06-06  Amos Bird  <amosbird@gmail.com>
+
+	* annotate.texinfo (Multi-threaded Apps): Add entry for thread-exited
+	annotation.
+
+2019-06-04  Christian Biesinger  <cbiesinger@google.com>
+
+	* python.texi: Document new gdb.Type.objfile property.
+
+2019-06-03  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* gdb.texinfo (Help): Document the new -v apropos flag.
+	(Output Styling): Document the style name styling done by "show style".
+	Document the new title and highlight styles.
+
 2019-05-31  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
 
 	* gdb.texinfo (Shell Commands): Document pipe command.

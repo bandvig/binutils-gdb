@@ -1,3 +1,91 @@
+2019-06-06  Руслан Ижбулатов <lrn1986@gmail.com>
+
+	* source.c (find_and_open_source): Also rewrite relative file
+	names.
+
+2019-04-26  Amos Bird  <amosbird@gmail.com>
+
+	* annotate.c (annotate_thread_exited): Add "thread-exited"
+	annotation.
+
+2019-06-06  Tom Tromey  <tromey@adacore.com>
+
+	* maint.h (class scoped_command_stats): Use
+	DISABLE_COPY_AND_ASSIGN.
+	<print_time>: New method.
+	* maint.c (scoped_command_stats, ~scoped_command_stats): Call
+	print_time.
+	(scoped_command_stats::print_time): New method.
+
+2019-06-05  Andrew Burgess  <andrew.burgess@embecosm.com>
+
+	* riscv-tdep.c (riscv_insn::decode): Gracefully ignore
+	instructions of lengths 6 or 8 bytes.
+
+2019-06-04  Pedro Alves  <palves@redhat.com>
+
+	* common/gdb_unique_ptr.h (make_unique_xstrdup): New.
+
+	* ada-lang.c (catch_ada_completer): Use make_unique_xstrdup.
+	* breakpoint.c (condition_completer): Likewise.
+	* cli/cli-dump.c (scan_expression): Likewise.
+	* common/filestuff.c (mkdir_recursive): Likewise.
+	* common/gdb_tilde_expand.c (gdb_tilde_expand_up)
+	* common/pathstuff.c (gdb_realpath, gdb_realpath_keepfile)
+	(gdb_abspath): Likewise.
+	* compile/compile-cplus-types.c
+	(compile_cplus_instance::decl_name): Likewise.
+	* completer.c (complete_explicit_location):
+	(signal_completer, reg_or_group_completer_1): Likewise.
+	* cp-support.c (cp_remove_params_if_any): Likewise.
+	* fbsd-tdep.c (fbsd_core_vnode_path): Likewise.
+	* guile/scm-safe-call.c (gdbscm_safe_eval_string): Likewise.
+	* infcmd.c (strip_bg_char): Likewise.
+	* linespec.c (copy_token_string): Likewise.
+	* mi/mi-main.c (output_cores): Likewise.
+	* psymtab.c (psymtab_search_name):
+	* symfile.c (test_set_ext_lang_command): Likewise.
+	* target.c (target_fileio_read_stralloc): Likewise.
+	* tui/tui-regs.c (tui_reggroup_completer): Likewise.
+	* value.c (complete_internalvar): Likewise.
+
+2019-06-04  Christian Biesinger  <cbiesinger@google.com>
+
+	Add objfile property to gdb.Type.
+	* NEWS: Mention Python API addition.
+	* python/py-type.c (typy_get_objfile): New method.
+
+2019-06-03  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* NEWS: Mention the new set|show style [title|highlight].
+	Mention changes to "show style", "help" and "apropos".
+
+2019-06-03  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* cli/cli-decode.h (apropos_cmd): Add verbose argument.
+	* cli/cli-decode.c (apropos_cmd): Likewise.  Use print_doc_of_command
+	instead of print_help_for_command.
+	(print_doc_of_command): New function.
+	(help_list): Add 'apropos -v word' suggestion.
+	(print_help_for_command): Style the command name using title style.
+	* cli/cli-cmds.c (apropos_command): Parse optional -v flag.
+	(_initialize_cli_cmds): Describe -v in apropos_command help.
+
+2019-06-03  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
+
+	* cli/cli-style.h (cli_style_option): Add name in constructor,
+	add m_name class member, add constructor with intensity,
+	add name class function.
+	(cli_style_option::add_setshow_commands): Remove name argument.
+	(highlight_style, title_style): New styles.
+	* cli/cli-style.c (do_show): New function that shows a style
+	characteristic styling the style name with itself.
+	(set_style_name): New function.
+	(STYLE_ADD_SETSHOW_COMMANDS): Remove NAME arguments.
+	Update all callers according to the changes in cli/cli-style.h.
+	* utils.h (fputs_highlighted): New function.
+	* utils.c (fputs_highlighted): Likewise.
+
 2019-05-31  Philippe Waroquiers  <philippe.waroquiers@skynet.be>
 
 	* NEWS: Mention new pipe command and new convenience variables.
